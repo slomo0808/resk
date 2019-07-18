@@ -1,7 +1,21 @@
 package infra
 
+import "github.com/go-ini/ini"
+
+const (
+	KeyProps = "_conf"
+)
+
 // 基础资源上下结构体
 type StarterContext map[string]interface{}
+
+func (s StarterContext) Props() *ini.File {
+	p := s[KeyProps]
+	if p == nil {
+		panic("配置还没有被初始化")
+	}
+	return p.(*ini.File)
+}
 
 // 接触资源启动器接口
 type Starter interface {
