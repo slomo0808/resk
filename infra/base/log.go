@@ -4,6 +4,7 @@ import (
 	"github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 	"github.com/x-cray/logrus-prefixed-formatter"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -69,6 +70,6 @@ func logFileSettings() {
 		log.Errorf("config local file system logger error = %+v", err)
 	}
 
-	// writers := io.MultiWriter(writer, os.Stdout)
-	log.SetOutput(writer)
+	writers := io.MultiWriter(writer, os.Stdout)
+	log.SetOutput(writers)
 }

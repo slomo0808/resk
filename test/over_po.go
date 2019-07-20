@@ -21,5 +21,5 @@ type Goods struct {
 	RemainQuantity int             `db:"remain_quantity"`
 	EnvelopeNo     string          `db:"envelope_no,uni"`
 	CreatedAt      time.Time       `db:"created_at,omitempty"`
-	UpdatedAt      time.Time       `db:"created_at,omitempty"`
+	UpdatedAt      time.Time       `db:"updated_at,omitempty"`
 }
