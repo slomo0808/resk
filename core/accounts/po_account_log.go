@@ -16,7 +16,7 @@ type AccountLog struct {
 	UserId          string              `db:"user_id"`
 	Username        string              `db:"username"`
 	TargetUserId    string              `db:"target_user_id"`
-	TargetUserName  string              `db:"target_username"`
+	TargetUsername  string              `db:"target_username"`
 	Amount          decimal.Decimal     `db:"amount"`
 	Balance         decimal.Decimal     `db:"balance"`
 	ChangeType      services.ChangeType `db:"change_type"`
@@ -24,4 +24,18 @@ type AccountLog struct {
 	Status          int                 `db:"status"`
 	Desc            string              `db:"desc"`
 	CreatedAt       time.Time           `db:"created_at,omitempty"`
+}
+
+func (po *AccountLog) FromTransferDTO(dto *services.AccountTransferDTO) {
+	po.TradeNo = dto.TradeNo
+	po.AccountNo = dto.TradeBody.AccountNo
+	po.UserId = dto.TradeBody.UserId
+	po.Username = dto.TradeBody.Username
+	po.TargetAccountNo = dto.TradeTarget.AccountNo
+	po.TargetUserId = dto.TradeTarget.UserId
+	po.TargetUsername = dto.TradeTarget.Username
+	po.Amount = dto.Amount
+	po.ChangeFlag = dto.ChangeFlag
+	po.ChangeType = dto.ChangeType
+	po.Desc = dto.Desc
 }

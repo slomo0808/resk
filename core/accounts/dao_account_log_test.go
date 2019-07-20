@@ -24,7 +24,7 @@ func TestAccountLogDao(t *testing.T) {
 				UserId:          ksuid.New().Next().String(),
 				Username:        "账户流水测试",
 				TargetUserId:    ksuid.New().Next().String(),
-				TargetUserName:  "目标账户流水测试",
+				TargetUsername:  "目标账户流水测试",
 				Amount:          decimal.NewFromFloat(100),
 				Balance:         decimal.NewFromFloat(1000),
 				ChangeType:      services.AccountStoreValue,
