@@ -14,6 +14,7 @@ type AccountService interface {
 	StoreValue(dto *AccountTransferDTO) (TransferredStatus, error)
 	// 查询
 	GetEnvelopeAccountByUserId(userId string) *AccountDTO
+	GetAccount(accountNo string) *AccountDTO
 }
 
 // DTO : Data Transfer Object
@@ -21,12 +22,12 @@ type AccountService interface {
 
 // 账户创建
 type AccountCreatedDTO struct {
-	UserId       string
-	Username     string
-	AccountName  string
+	UserId       string `validate:"required"`
+	Username     string `validate:"required"`
+	AccountName  string `validate:"required"`
 	AccountType  int
 	CurrencyCode string
-	Amount       string
+	Amount       string `validate:"required"`
 }
 
 //账户
@@ -45,21 +46,21 @@ type AccountDTO struct {
 
 // 账户交易参与者
 type TradeParticipator struct {
-	AccountNo string
-	UserId    string
-	Username  string
+	AccountNo string `validate:"required"`
+	UserId    string `validate:"required"`
+	Username  string `validate:"required"`
 }
 
 // 账户转账
 type AccountTransferDTO struct {
-	TradeNo     string
-	TradeBody   TradeParticipator
-	TradeTarget TradeParticipator
-	AmountStr   string
-	Amount      decimal.Decimal
-	ChangeType  ChangeType
-	ChangeFlag  ChangeFlag
-	Desc        string
+	TradeNo     string            `validate:"required"`
+	TradeBody   TradeParticipator `validate:"required"`
+	TradeTarget TradeParticipator `validate:"required"`
+	AmountStr   string            `validate:"required"`
+	Amount      decimal.Decimal   ``
+	ChangeType  ChangeType        `validate:"required"`
+	ChangeFlag  ChangeFlag        `validate:"required"`
+	Desc        string            ``
 }
 
 //账户流水

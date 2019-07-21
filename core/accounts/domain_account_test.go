@@ -35,16 +35,18 @@ func TestAccountDomain_Create(t *testing.T) {
 func TestAccountDomain_Transfer(t *testing.T) {
 	// 两个账户，一个交易主体，一个交易对象
 	body := &services.AccountDTO{
-		UserId:   ksuid.New().Next().String(),
-		Username: "交易主体",
-		Balance:  decimal.NewFromFloat(1000),
-		Status:   1,
+		UserId:      ksuid.New().Next().String(),
+		Username:    "交易主体",
+		Balance:     decimal.NewFromFloat(1000),
+		Status:      1,
+		AccountType: int(services.EnvelopeAccountType),
 	}
 	target := &services.AccountDTO{
-		UserId:   ksuid.New().Next().String(),
-		Username: "交易对象",
-		Balance:  decimal.NewFromFloat(0),
-		Status:   1,
+		UserId:      ksuid.New().Next().String(),
+		Username:    "交易对象",
+		Balance:     decimal.NewFromFloat(0),
+		Status:      1,
+		AccountType: int(services.EnvelopeAccountType),
 	}
 	domain := accountDomain{}
 	Convey("转账测试", t, func() {
@@ -98,10 +100,23 @@ func TestAccountDomain_Transfer(t *testing.T) {
 				accountLogDao := AccountLogDao{runner: runner}
 				// 得到交易主体新数据
 				bodyOut := accountDao.GetOne(aBody.AccountNo)
+				bodyOutByUserId := domain.GetEnvelopeAccountByUserId(aBody.UserId)
+				So(bodyOut.UserId, ShouldEqual, bodyOutByUserId.UserId)
+				So(bodyOut.AccountNo, ShouldEqual, bodyOutByUserId.AccountNo)
+				So(bodyOut.Status, ShouldEqual, bodyOutByUserId.Status)
+				So(bodyOut.AccountType, ShouldEqual, bodyOutByUserId.AccountType)
+				So(bodyOut.Balance.String(), ShouldEqual, bodyOutByUserId.Balance.String())
+
 				So(bodyOut, ShouldNotBeNil)
 				// 得到交易对象最新数据
 				targetOut := accountDao.GetOne(aTarget.AccountNo)
+				targetOutByUserId := domain.GetEnvelopeAccountByUserId(aTarget.UserId)
 				So(targetOut, ShouldNotBeNil)
+				So(targetOut.UserId, ShouldEqual, targetOutByUserId.UserId)
+				So(targetOut.AccountNo, ShouldEqual, targetOutByUserId.AccountNo)
+				So(targetOut.Status, ShouldEqual, targetOutByUserId.Status)
+				So(targetOut.AccountType, ShouldEqual, targetOutByUserId.AccountType)
+				So(targetOut.Balance.String(), ShouldEqual, targetOutByUserId.Balance.String())
 
 				// 验证交易主体，余额扣减正确
 				So(bodyOut.Balance.String(),
@@ -111,6 +126,7 @@ func TestAccountDomain_Transfer(t *testing.T) {
 				So(targetOut.Balance.String(), ShouldEqual, target.Balance.Add(dto.Amount).String())
 				// 验证交易流水数据正确
 				outLog := accountLogDao.GetByTradeNo(dto.TradeNo)
+
 				So(outLog, ShouldNotBeNil)
 				// 验证流水中交易主体和交易目标正确
 				So(outLog.AccountNo, ShouldEqual, bodyOut.AccountNo)
