@@ -7,9 +7,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
+	"sync"
 )
 
 var _ services.AccountService = new(accountService)
+var one sync.Once
+
+func init() {
+	one.Do(func() {
+		services.IAccountService = new(accountService)
+	})
+}
 
 type accountService struct {
 }

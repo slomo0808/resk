@@ -2,8 +2,17 @@ package services
 
 import (
 	"github.com/shopspring/decimal"
+	"imooc.com/resk/infra/base"
 	"time"
 )
+
+var IAccountService AccountService
+
+// 用于对外暴露的应用服务，唯一的暴露点
+func GetAccountService() AccountService {
+	base.Check(IAccountService)
+	return IAccountService
+}
 
 type AccountService interface {
 	// 创建账户
@@ -22,45 +31,45 @@ type AccountService interface {
 
 // 账户创建
 type AccountCreatedDTO struct {
-	UserId       string `validate:"required"`
-	Username     string `validate:"required"`
-	AccountName  string `validate:"required"`
-	AccountType  int
-	CurrencyCode string
-	Amount       string `validate:"required"`
+	UserId       string `json:"user_id" validate:"required"`
+	Username     string `json:"username" validate:"required"`
+	AccountName  string `json:"account_name" validate:"required"`
+	AccountType  int    `json:"account_type"`
+	CurrencyCode string `json:"currency_code"`
+	Amount       string `json:"amount" validate:"required"`
 }
 
 //账户
 type AccountDTO struct {
-	AccountNo    string          //账户编号,账户唯一标识
-	AccountName  string          //账户名称,用来说明账户的简短描述,账户对应的名称或者命名，比如xxx积分、xxx零钱
-	AccountType  int             //账户类型，用来区分不同类型的账户：积分账户、会员卡账户、钱包账户、红包账户
-	CurrencyCode string          //货币类型编码：CNY人民币，EUR欧元，USD美元 。。。
-	UserId       string          //用户编号, 账户所属用户
-	Username     string          //用户名称
-	Balance      decimal.Decimal //账户可用余额
-	Status       int             //账户状态，账户状态：0账户初始化，1启用，2停用
-	CreatedAt    time.Time       //创建时间
-	UpdatedAt    time.Time       //更新时间
+	AccountNo    string          `json:"account_no"`    //账户编号,账户唯一标识
+	AccountName  string          `json:"account_name"`  //账户名称,用来说明账户的简短描述,账户对应的名称或者命名，比如xxx积分、xxx零钱
+	AccountType  int             `json:"account_type"`  //账户类型，用来区分不同类型的账户：积分账户、会员卡账户、钱包账户、红包账户
+	CurrencyCode string          `json:"currency_code"` //货币类型编码：CNY人民币，EUR欧元，USD美元 。。。
+	UserId       string          `json:"user_id"`       //用户编号, 账户所属用户
+	Username     string          `json:"username"`      //用户名称
+	Balance      decimal.Decimal `json:"balance"`       //账户可用余额
+	Status       int             `json:"status"`        //账户状态，账户状态：0账户初始化，1启用，2停用
+	CreatedAt    time.Time       `json:"created_at"`    //创建时间
+	UpdatedAt    time.Time       `json:"updated_at"`    //更新时间
 }
 
 // 账户交易参与者
 type TradeParticipator struct {
-	AccountNo string `validate:"required"`
-	UserId    string `validate:"required"`
-	Username  string `validate:"required"`
+	AccountNo string `validate:"required" json:"account_no"`
+	UserId    string `validate:"required" json:"user_id"`
+	Username  string `validate:"required" json:"username"`
 }
 
 // 账户转账
 type AccountTransferDTO struct {
-	TradeNo     string            `validate:"required"`
-	TradeBody   TradeParticipator `validate:"required"`
-	TradeTarget TradeParticipator `validate:"required"`
-	AmountStr   string            `validate:"required"`
+	TradeNo     string            `validate:"required" json:"trade_no"`
+	TradeBody   TradeParticipator `validate:"required" json:"trade_body"`
+	TradeTarget TradeParticipator `validate:"required" json:"trade_target"`
+	AmountStr   string            `validate:"required" json:"amount_str"`
 	Amount      decimal.Decimal   ``
-	ChangeType  ChangeType        `validate:"required"`
-	ChangeFlag  ChangeFlag        `validate:"required"`
-	Desc        string            ``
+	ChangeType  ChangeType        `validate:"required" json:"change_type"`
+	ChangeFlag  ChangeFlag        `validate:"required" json:"change_flag"`
+	Desc        string            `json:"desc"`
 }
 
 //账户流水
