@@ -3,6 +3,7 @@ package base
 import (
 	"context"
 	"database/sql"
+	"github.com/sirupsen/logrus"
 	"github.com/tietang/dbx"
 )
 
@@ -23,7 +24,7 @@ func Tx(fn TxFunc) error {
 	return TxContext(context.Background(), fn)
 }
 
-// 实物执行
+// 事务执行
 func TxContext(ctx context.Context, fn TxFunc) error {
 	return DbxDatabase().Tx(fn)
 }
@@ -33,7 +34,10 @@ func WithValueContext(parent context.Context, runner *dbx.TxRunner) context.Cont
 	return context.WithValue(parent, TX, runner)
 }
 
-func ExcuteContext(ctx context.Context, fn func(runner *dbx.TxRunner) error) error {
-	tx := ctx.Value(TX).(*dbx.TxRunner)
+func ExecuteContext(ctx context.Context, fn func(runner *dbx.TxRunner) error) error {
+	tx, ok := ctx.Value(TX).(*dbx.TxRunner)
+	if !ok || tx == nil {
+		logrus.Panic("是否在事务函数块中使用？")
+	}
 	return fn(tx)
 }

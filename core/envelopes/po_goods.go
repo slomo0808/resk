@@ -1,6 +1,7 @@
 package envelopes
 
 import (
+	"database/sql"
 	"github.com/shopspring/decimal"
 	"imooc.com/resk/services"
 	"time"
@@ -10,9 +11,9 @@ type RedEnvelopeGoods struct {
 	Id             int64                `db:"id,omitempty"`
 	EnvelopeNo     string               `db:"envelope_no,unique"`
 	EnvelopeType   int                  `db:"envelope_type"`
-	Username       string               `db:"username"`
+	Username       sql.NullString       `db:"username"`
 	UserId         string               `db:"user_id"`
-	Blessing       string               `db:"blessing"`
+	Blessing       sql.NullString       `db:"blessing"`
 	Amount         decimal.Decimal      `db:"amount"`
 	AmountOne      decimal.Decimal      `db:"amount_one"`
 	Quantity       int                  `db:"quantity"`
@@ -30,9 +31,9 @@ func (po *RedEnvelopeGoods) ToDTO() *services.RedEnvelopeGoodsDTO {
 	return &services.RedEnvelopeGoodsDTO{
 		EnvelopeNo:     po.EnvelopeNo,
 		EnvelopeType:   po.EnvelopeType,
-		Username:       po.Username,
+		Username:       po.Username.String,
 		UserId:         po.UserId,
-		Blessing:       po.Blessing,
+		Blessing:       po.Blessing.String,
 		Amount:         po.Amount,
 		AmountOne:      po.AmountOne,
 		Quantity:       po.Quantity,
@@ -46,4 +47,26 @@ func (po *RedEnvelopeGoods) ToDTO() *services.RedEnvelopeGoodsDTO {
 		UpdatedAt:      po.UpdatedAt,
 		AccountNo:      "",
 	}
+}
+
+func (po *RedEnvelopeGoods) FromDTO(dto *services.RedEnvelopeGoodsDTO) {
+	po.EnvelopeType = dto.EnvelopeType
+	po.UserId = dto.UserId
+	po.Username = sql.NullString{
+		String: dto.Username,
+		Valid:  true,
+	}
+	po.Blessing = sql.NullString{
+		String: dto.Blessing,
+		Valid:  true,
+	}
+	po.Amount = dto.Amount
+	po.AmountOne = dto.AmountOne
+	po.Quantity = dto.Quantity
+	po.RemainAmount = dto.RemainAmount
+	po.RemainQuantity = dto.RemainQuantity
+	po.ExpiredAt = dto.ExpiredAt
+	po.Status = services.OrderStatus(dto.Status)
+	po.OrderType = dto.OrderType
+	po.PayStatus = dto.PayStatus
 }

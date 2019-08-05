@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"context"
 	"github.com/kataras/iris/core/errors"
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
@@ -19,6 +20,10 @@ type accountDomain struct {
 
 func NewAccountDomain() *accountDomain {
 	return new(accountDomain)
+}
+
+func (domain *accountDomain) GetAccountNo() string {
+	return domain.account.AccountNo
 }
 
 // 创建log_no的逻辑
@@ -101,7 +106,21 @@ func (domain *accountDomain) Create(dto *services.AccountDTO) (*services.Account
 }
 
 // 领域对象转账业务逻辑
-func (domain *accountDomain) Transfer(dto *services.AccountTransferDTO) (status services.TransferredStatus, err error) {
+func (domain *accountDomain) Transfer(
+	dto *services.AccountTransferDTO) (
+	status services.TransferredStatus, err error) {
+	err = base.Tx(func(runner *dbx.TxRunner) error {
+		ctx := base.WithValueContext(context.Background(), runner)
+		status, err = domain.TransferWithContextTx(ctx, dto)
+		return err
+	})
+	return status, err
+}
+
+// 必须在base.TX事务块l里面运行，不能单独运行
+func (domain *accountDomain) TransferWithContextTx(
+	ctx context.Context, dto *services.AccountTransferDTO) (
+	status services.TransferredStatus, err error) {
 	// 如果交易变化是支出类型，修正amount为负值
 	var amount = dto.Amount
 	if dto.ChangeFlag == services.FlagTransferOut {
@@ -115,7 +134,7 @@ func (domain *accountDomain) Transfer(dto *services.AccountTransferDTO) (status 
 
 	// 检查余额是否足够和更新余额：通过乐观锁验证，更新余额的同时来验证余额是否足
 	// 更行成功后，写入流水记录
-	err = base.Tx(func(runner *dbx.TxRunner) error {
+	err = base.ExecuteContext(ctx, func(runner *dbx.TxRunner) error {
 		accountDao := AccountDao{runner: runner}
 		accountLogDao := AccountLogDao{runner: runner}
 		rows, err := accountDao.UpdateBalance(dto.TradeBody.AccountNo, amount)
@@ -136,13 +155,13 @@ func (domain *accountDomain) Transfer(dto *services.AccountTransferDTO) (status 
 		domain.accountLog.Balance = domain.account.Balance
 
 		// 如果对于交易主体来说，ChangeFlag是资金转出, 则交易目标余额增加
-		if dto.ChangeFlag == services.FlagTransferOut {
-			rows, err = accountDao.UpdateBalance(dto.TradeTarget.AccountNo, amount.Abs())
-			if rows < 1 || err != nil {
-				status = services.TransferredStatusFailure
-				return errors.New("目标账户余额增加失败")
-			}
-		}
+		//if dto.ChangeFlag == services.FlagTransferOut {
+		//	rows, err = accountDao.UpdateBalance(dto.TradeTarget.AccountNo, amount.Abs())
+		//	if rows < 1 || err != nil {
+		//		status = services.TransferredStatusFailure
+		//		return errors.New("目标账户余额增加失败")
+		//	}
+		//}
 
 		id, err := accountLogDao.Insert(&domain.accountLog)
 		if err != nil || id < 1 {

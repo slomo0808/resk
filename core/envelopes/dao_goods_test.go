@@ -1,6 +1,7 @@
 package envelopes
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
@@ -22,9 +23,9 @@ func TestRedEnvelopeDao_GetOne(t *testing.T) {
 			var good = &RedEnvelopeGoods{
 				EnvelopeNo:     ksuid.New().Next().String(),
 				EnvelopeType:   int(services.LuckyEnvelopeType),
-				Username:       ksuid.New().Next().String(),
+				Username:       sql.NullString{String: ksuid.New().Next().String(), Valid: true},
 				UserId:         ksuid.New().Next().String(),
-				Blessing:       "测试用红包商品",
+				Blessing:       sql.NullString{String: "测试用红包商品", Valid: true},
 				Amount:         decimal.NewFromFloat(100),
 				AmountOne:      decimal.Decimal{},
 				Quantity:       10,
@@ -42,7 +43,7 @@ func TestRedEnvelopeDao_GetOne(t *testing.T) {
 			out := dao.GetOne(good.EnvelopeNo)
 			So(out, ShouldNotBeNil)
 			So(out.EnvelopeNo, ShouldEqual, good.EnvelopeNo)
-			So(out.Username, ShouldEqual, good.Username)
+			So(out.Username.String, ShouldEqual, good.Username.String)
 			So(out.UserId, ShouldEqual, good.UserId)
 			So(out.Amount.String(), ShouldEqual, good.Amount.String())
 			So(out.Quantity, ShouldEqual, good.Quantity)
@@ -68,9 +69,9 @@ func TestRedEnvelopeDao_UpdateBalance(t *testing.T) {
 			var good = &RedEnvelopeGoods{
 				EnvelopeNo:     ksuid.New().Next().String(),
 				EnvelopeType:   int(services.LuckyEnvelopeType),
-				Username:       ksuid.New().Next().String(),
+				Username:       sql.NullString{String: ksuid.New().Next().String(), Valid: true},
 				UserId:         ksuid.New().Next().String(),
-				Blessing:       "测试用红包商品",
+				Blessing:       sql.NullString{String: "测试用红包商品", Valid: true},
 				Amount:         decimal.NewFromFloat(100),
 				AmountOne:      decimal.Decimal{},
 				Quantity:       10,
@@ -93,7 +94,7 @@ func TestRedEnvelopeDao_UpdateBalance(t *testing.T) {
 			out := dao.GetOne(good.EnvelopeNo)
 			So(out, ShouldNotBeNil)
 			So(out.EnvelopeNo, ShouldEqual, good.EnvelopeNo)
-			So(out.Username, ShouldEqual, good.Username)
+			So(out.Username.String, ShouldEqual, good.Username.String)
 			So(out.UserId, ShouldEqual, good.UserId)
 			So(out.Amount.String(), ShouldEqual, good.Amount.String())
 			So(out.Quantity, ShouldEqual, good.Quantity)
