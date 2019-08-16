@@ -105,6 +105,21 @@ func (domain *accountDomain) Create(dto *services.AccountDTO) (*services.Account
 	return rdto, err
 }
 
+// 验证用户该账户是否已经存在
+func (domain *accountDomain) GetAccountByUserIdAndType(userId string, aType services.AccountType) *services.AccountDTO {
+	var a *Account
+	err := base.Tx(func(runner *dbx.TxRunner) error {
+		accountDao := AccountDao{runner: runner}
+		a = accountDao.GetByUserId(userId, int(aType))
+		return nil
+	})
+	if err != nil || a == nil {
+		return nil
+	} else {
+		return a.ToDTO()
+	}
+}
+
 // 领域对象转账业务逻辑
 func (domain *accountDomain) Transfer(
 	dto *services.AccountTransferDTO) (

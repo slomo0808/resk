@@ -42,3 +42,21 @@ func (v *ValidatorStarter) Init(ctx infra.StarterContext) {
 		logrus.Error("Not found translator: zh")
 	}
 }
+
+func ValidateStruct(s interface{}) error {
+	err := Validate().Struct(s)
+	if err != nil {
+		_, ok := err.(*validator.InvalidValidationError)
+		if ok {
+			logrus.Error("账户创建验证错误", err)
+		}
+		errs, ok := err.(validator.ValidationErrors)
+		if ok {
+			for _, e := range errs {
+				logrus.Error(e.Translate(Translate()))
+			}
+		}
+		return err
+	}
+	return nil
+}

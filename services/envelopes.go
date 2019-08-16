@@ -17,7 +17,7 @@ func GetRedEnvelopeService() RedEnvelopeService {
 // 创建接口
 type RedEnvelopeService interface {
 	// 发红包
-	SendOut(*RedEnvelopeSendingDTO) (*RedEnvelopeActivity, error)
+	SendOut(RedEnvelopeSendingDTO) (*RedEnvelopeActivity, error)
 	// 收红包
 	Receive(*RedEnvelopeReceiveDTO) (*RedEnvelopeItemDTO, error)
 	// 退款
@@ -36,6 +36,17 @@ type RedEnvelopeSendingDTO struct {
 	Quantity     int             `json:"quantity" validate:"required"`
 }
 
+func (dto *RedEnvelopeSendingDTO) ToGoods() *RedEnvelopeGoodsDTO {
+	return &RedEnvelopeGoodsDTO{
+		EnvelopeType: dto.EnvelopeType,
+		Username:     dto.Username,
+		UserId:       dto.UserId,
+		Blessing:     dto.Blessing,
+		Amount:       dto.Amount,
+		Quantity:     dto.Quantity,
+	}
+}
+
 // 收红包所需信息
 type RedEnvelopeReceiveDTO struct {
 	EnvelopeNo   string `json:"envelope_no" validate:"required"`
@@ -47,6 +58,26 @@ type RedEnvelopeReceiveDTO struct {
 type RedEnvelopeActivity struct {
 	Link string `json:"link"` //活动链接
 	RedEnvelopeGoodsDTO
+}
+
+func (this *RedEnvelopeActivity) CopyTo(target *RedEnvelopeActivity) {
+	target.Link = this.Link
+	target.EnvelopeNo = this.EnvelopeNo
+	target.EnvelopeType = this.EnvelopeType
+	target.Username = this.Username
+	target.UserId = this.UserId
+	target.Blessing = this.Blessing
+	target.Amount = this.Amount
+	target.AmountOne = this.AmountOne
+	target.Quantity = this.Quantity
+	target.RemainAmount = this.RemainAmount
+	target.RemainQuantity = this.RemainQuantity
+	target.ExpiredAt = this.ExpiredAt
+	target.Status = this.Status
+	target.OrderType = this.OrderType
+	target.PayStatus = this.PayStatus
+	target.CreatedAt = this.CreatedAt
+	target.UpdatedAt = this.UpdatedAt
 }
 
 type RedEnvelopeGoodsDTO struct {

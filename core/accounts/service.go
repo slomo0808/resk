@@ -2,9 +2,8 @@ package accounts
 
 import (
 	"errors"
+	"fmt"
 	"github.com/shopspring/decimal"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/go-playground/validator.v9"
 	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
 	"sync"
@@ -25,19 +24,14 @@ type accountService struct {
 func (s *accountService) CreateAccount(dto *services.AccountCreatedDTO) (*services.AccountDTO, error) {
 	domain := NewAccountDomain()
 	// 验证输入参数
-	err := base.Validate().Struct(dto)
-	if err != nil {
-		_, ok := err.(*validator.InvalidValidationError)
-		if ok {
-			logrus.Error("账户创建验证错误", err)
-		}
-		errs, ok := err.(validator.ValidationErrors)
-		if ok {
-			for _, e := range errs {
-				logrus.Error(e.Translate(base.Translate()))
-			}
-		}
+	if err := base.ValidateStruct(dto); err != nil {
 		return nil, err
+	}
+	// 验证账户是否已经存在
+	acc := domain.GetAccountByUserIdAndType(dto.UserId, services.EnvelopeAccountType)
+	if acc != nil {
+		return acc, errors.New(fmt.Sprintf("用户的该类型账户已经存在，username=%s[%s],账户类型:%d",
+			acc.Username, acc.UserId, acc.AccountType))
 	}
 	// 执行账户创建的业务逻辑代码
 	amount, err := decimal.NewFromString(dto.Amount)
@@ -59,16 +53,7 @@ func (s *accountService) CreateAccount(dto *services.AccountCreatedDTO) (*servic
 func (s *accountService) Transfer(dto *services.AccountTransferDTO) (services.TransferredStatus, error) {
 	domain := NewAccountDomain()
 	// 验证dto
-	err := base.Validate().Struct(dto)
-	if err != nil {
-		if _, ok := err.(*validator.InvalidValidationError); ok {
-			logrus.Error("转账验证错误", err)
-		}
-		if errs, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range errs {
-				logrus.Error(e.Translate(base.Translate()))
-			}
-		}
+	if err := base.ValidateStruct(dto); err != nil {
 		return services.TransferredStatusFailure, err
 	}
 	// 执行转账逻辑
