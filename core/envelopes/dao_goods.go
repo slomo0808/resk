@@ -59,10 +59,10 @@ func (dao *RedEnvelopeDao) UpdateBalance(envelopeNo string, amount decimal.Decim
 
 // 退款更新订单状态
 func (dao *RedEnvelopeDao) UpdateOrderStatus(envelopeNo string, status services.OrderStatus) (int64, error) {
-	sqlQuery := "update red_envelope_goods " +
-		" set status = ? " +
-		" where envelope_no = ?"
-	res, err := dao.runner.Exec(sqlQuery, status, envelopeNo)
+	sqlQuery := " update red_envelope_goods" +
+		" set status=? " +
+		" where envelope_no=?"
+	res, err := dao.runner.Exec(sqlQuery, int(status), envelopeNo)
 	if err != nil {
 		logrus.Error(err)
 		return 0, err

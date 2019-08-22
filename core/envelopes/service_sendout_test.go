@@ -22,7 +22,6 @@ func TestRedEnvelopeService_SendOut(t *testing.T) {
 		Amount:      "1000",
 	}
 	res := services.GetRedEnvelopeService()
-
 	err := base.Tx(func(runner *dbx.TxRunner) error {
 		Convey("准备账户", t, func() {
 			aDTO, err := as.CreateAccount(acDTO)

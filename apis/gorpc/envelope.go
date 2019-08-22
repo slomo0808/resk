@@ -20,3 +20,12 @@ func (e *EnvelopeRpc) SendOut(
 	a.CopyTo(out)
 	return err
 }
+
+func (e *EnvelopeRpc) Receive(
+	in services.RedEnvelopeReceiveDTO,
+	out *services.RedEnvelopeItemDTO) error {
+	s := services.GetRedEnvelopeService()
+	item, err := s.Receive(&in)
+	item.CopyTo(out)
+	return err
+}

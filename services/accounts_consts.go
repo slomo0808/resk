@@ -24,8 +24,10 @@ const (
 	EnvelopeOutgoing ChangeType = -2
 	// 红包资金的收入
 	EnvelopeIncoming ChangeType = 2
-	// 红包资金的过期退款
-	EncelopeExpiredRefund ChangeType = 3
+	// 用户方红包资金的过期退款
+	EnvelopeExpiredRefund ChangeType = 3
+	// 系统方红包资金的过期退款
+	SysEnvelopeExpiredRefund ChangeType = -3
 )
 
 // 资金交易的变化标识

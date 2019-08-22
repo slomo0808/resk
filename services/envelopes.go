@@ -81,27 +81,28 @@ func (this *RedEnvelopeActivity) CopyTo(target *RedEnvelopeActivity) {
 }
 
 type RedEnvelopeGoodsDTO struct {
-	EnvelopeNo     string          `json:"envelope_no"`
-	EnvelopeType   int             `json:"envelope_type" validate:"required"`
-	Username       string          `json:"username" validate:"required"`
-	UserId         string          `json:"user_id" validate:"required"`
-	Blessing       string          `json:"blessing"`
-	Amount         decimal.Decimal `json:"amount" validate:"required"`
-	AmountOne      decimal.Decimal `json:"amount_one"`
-	Quantity       int             `json:"quantity" validate:"required"`
-	RemainAmount   decimal.Decimal `json:"remain_amount"`
-	RemainQuantity int             `json:"remain_quantity"`
-	ExpiredAt      time.Time       `json:"expired_at"`
-	Status         int             `json:"status"`
-	OrderType      OrderType       `json:"order_type"`
-	PayStatus      PayStatus       `json:"pay_status"`
-	CreatedAt      time.Time       `json:"created_at"`
-	UpdatedAt      time.Time       `json:"updated_at"`
-	AccountNo      string          `json:"account_no"`
+	EnvelopeNo       string          `json:"envelope_no"`
+	EnvelopeType     int             `json:"envelope_type" validate:"required"`
+	Username         string          `json:"username" validate:"required"`
+	UserId           string          `json:"user_id" validate:"required"`
+	Blessing         string          `json:"blessing"`
+	Amount           decimal.Decimal `json:"amount" validate:"required"`
+	AmountOne        decimal.Decimal `json:"amount_one"`
+	Quantity         int             `json:"quantity" validate:"required"`
+	RemainAmount     decimal.Decimal `json:"remain_amount"`
+	RemainQuantity   int             `json:"remain_quantity"`
+	ExpiredAt        time.Time       `json:"expired_at"`
+	Status           int             `json:"status"`
+	OrderType        OrderType       `json:"order_type"`
+	PayStatus        PayStatus       `json:"pay_status"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
+	AccountNo        string          `json:"account_no"`
+	OriginEnvelopeNo string          `json:"origin_envelope_no"` // 原关联订单号
 }
 
 type RedEnvelopeItemDTO struct {
-	ItemNo       int64           `json:"item_no"`       // 红包订单详情编号
+	ItemNo       string          `json:"item_no"`       // 红包订单详情编号
 	EnvelopeNo   string          `json:"envelope_no"`   // 红包编号
 	RecvUsername string          `json:"recv_username"` // 接收者用户名
 	RecvUserId   string          `json:"recv_user_id"`  // 接收者用户id
@@ -112,4 +113,18 @@ type RedEnvelopeItemDTO struct {
 	PayStatus    int             `json:"pay_status"`    // 支付状态
 	CreatedAt    time.Time       `json:"created_at"`    // 创建时间
 	UpdatedAt    time.Time       `json:"updated_at"`    // 修改时间
+}
+
+func (item *RedEnvelopeItemDTO) CopyTo(target *RedEnvelopeItemDTO) {
+	target.ItemNo = item.ItemNo
+	target.EnvelopeNo = item.EnvelopeNo
+	target.RecvUsername = item.RecvUsername
+	target.RecvUserId = item.RecvUserId
+	target.Amount = item.Amount
+	target.Quantity = item.Quantity
+	target.RemainAmount = item.RemainAmount
+	target.AccountNo = item.AccountNo
+	target.PayStatus = item.PayStatus
+	target.CreatedAt = item.CreatedAt
+	target.UpdatedAt = item.UpdatedAt
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
+	"github.com/sirupsen/logrus"
 	"github.com/tietang/dbx"
 	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
@@ -12,11 +13,12 @@ import (
 
 type goodsDomain struct {
 	RedEnvelopeGoods
+	item itemDomain
 }
 
 // 生成红包编号
 func (domain *goodsDomain) createEnvelopeNo() {
-	domain.EnvelopeNo = ksuid.New().Next().String()
+	domain.RedEnvelopeGoods.EnvelopeNo = ksuid.New().Next().String()
 }
 
 // 创建一个红包商品对象
@@ -56,4 +58,18 @@ func (domain *goodsDomain) Save(ctx context.Context) (id int64, err error) {
 func (domain *goodsDomain) CreateAndSave(ctx context.Context, dto *services.RedEnvelopeGoodsDTO) (id int64, err error) {
 	domain.Create(dto)
 	return domain.Save(ctx)
+}
+
+// 查询商品信息
+func (domain *goodsDomain) Get(envelopeNo string) (goods *RedEnvelopeGoods) {
+	err := base.Tx(func(runner *dbx.TxRunner) error {
+		dao := &RedEnvelopeDao{runner: runner}
+		goods = dao.GetOne(envelopeNo)
+		return nil
+	})
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
+	return goods
 }

@@ -132,7 +132,7 @@ func (domain *accountDomain) Transfer(
 	return status, err
 }
 
-// 必须在base.TX事务块l里面运行，不能单独运行
+// 必须在base.TX事务块里面运行，不能单独运行
 func (domain *accountDomain) TransferWithContextTx(
 	ctx context.Context, dto *services.AccountTransferDTO) (
 	status services.TransferredStatus, err error) {
@@ -159,7 +159,12 @@ func (domain *accountDomain) TransferWithContextTx(
 		}
 		if rows < 1 && dto.ChangeFlag == services.FlagTransferOut {
 			status = services.TransferredStatusSufficientFunds
-			return errors.New("余额不足")
+			return errors.New("影响行数不为1，余额不足")
+		}
+
+		if rows < 1 && dto.ChangeFlag == services.FlagTransferIn {
+			status = services.TransferredStatusSufficientFunds
+			return errors.New("影响行数不为1，增加余额失败")
 		}
 
 		account := accountDao.GetOne(dto.TradeBody.AccountNo)
@@ -190,7 +195,6 @@ func (domain *accountDomain) TransferWithContextTx(
 	} else {
 		status = services.TransferredStatusSuccess
 	}
-
 	return
 }
 

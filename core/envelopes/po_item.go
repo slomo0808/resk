@@ -1,6 +1,7 @@
 package envelopes
 
 import (
+	"database/sql"
 	"github.com/shopspring/decimal"
 	"imooc.com/resk/services"
 	"time"
@@ -8,9 +9,9 @@ import (
 
 type RedEnvelopeItem struct {
 	Id           int64           `db:"id,omitempty"`
-	ItemNo       int64           `db:"item_no,unique"`       // 红包订单详情编号
+	ItemNo       string          `db:"item_no,unique"`       // 红包订单详情编号
 	EnvelopeNo   string          `db:"envelope_no"`          // 红包编号
-	RecvUsername string          `db:"recv_username"`        // 接收者用户名
+	RecvUsername sql.NullString  `db:"recv_username"`        // 接收者用户名
 	RecvUserId   string          `db:"recv_user_id"`         // 接收者用户id
 	Amount       decimal.Decimal `db:"amount"`               // 收到金额
 	Quantity     int             `db:"quantity"`             // 收到数量
@@ -25,7 +26,7 @@ func (po *RedEnvelopeItem) ToDTO() *services.RedEnvelopeItemDTO {
 	return &services.RedEnvelopeItemDTO{
 		ItemNo:       po.ItemNo,
 		EnvelopeNo:   po.EnvelopeNo,
-		RecvUsername: po.RecvUsername,
+		RecvUsername: po.RecvUsername.String,
 		RecvUserId:   po.RecvUserId,
 		Amount:       po.Amount,
 		Quantity:     po.Quantity,
@@ -35,4 +36,19 @@ func (po *RedEnvelopeItem) ToDTO() *services.RedEnvelopeItemDTO {
 		CreatedAt:    po.CreatedAt,
 		UpdatedAt:    po.UpdatedAt,
 	}
+}
+
+func (po *RedEnvelopeItem) FromDTO(dto *services.RedEnvelopeItemDTO) {
+	po.ItemNo = dto.ItemNo
+	po.EnvelopeNo = dto.EnvelopeNo
+	po.RecvUsername = sql.NullString{
+		String: dto.RecvUsername,
+		Valid:  true,
+	}
+	po.RecvUserId = dto.RecvUserId
+	po.Amount = dto.Amount
+	po.Quantity = dto.Quantity
+	po.RemainAmount = dto.RemainAmount
+	po.AccountNo = dto.AccountNo
+	po.PayStatus = dto.PayStatus
 }

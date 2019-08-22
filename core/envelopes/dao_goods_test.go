@@ -129,3 +129,40 @@ func TestRedEnvelopeDao_FindExpired(t *testing.T) {
 		logrus.Error(err)
 	}
 }
+
+// 更新状态
+func TestRedEnvelopeDao_UpdateOrderStatus(t *testing.T) {
+	err := base.Tx(func(runner *dbx.TxRunner) error {
+		dao := RedEnvelopeDao{runner: runner}
+		Convey("更新状态", t, func() {
+			// 插入数据
+			var good = &RedEnvelopeGoods{
+				EnvelopeNo:     ksuid.New().Next().String(),
+				EnvelopeType:   int(services.LuckyEnvelopeType),
+				Username:       sql.NullString{String: ksuid.New().Next().String(), Valid: true},
+				UserId:         ksuid.New().Next().String(),
+				Blessing:       sql.NullString{String: "测试用红包商品", Valid: true},
+				Amount:         decimal.NewFromFloat(100),
+				AmountOne:      decimal.Decimal{},
+				Quantity:       10,
+				RemainAmount:   decimal.NewFromFloat(100),
+				RemainQuantity: 10,
+				ExpiredAt:      time.Now().Add(5 * time.Second),
+				Status:         services.OrderSending,
+				OrderType:      services.OrderTypeSending,
+				PayStatus:      services.Payed,
+			}
+			id, err := dao.Insert(good)
+			So(id, ShouldBeGreaterThan, 0)
+			So(err, ShouldBeNil)
+
+			rows, err := dao.UpdateOrderStatus(good.EnvelopeNo, 100)
+			So(rows, ShouldBeGreaterThan, 0)
+			So(err, ShouldBeNil)
+		})
+		return nil
+	})
+	if err != nil {
+		logrus.Error(err)
+	}
+}

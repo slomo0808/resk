@@ -20,16 +20,23 @@ const (
 	Paying     PayStatus = 2
 	Payed      PayStatus = 3
 	PayFailed  PayStatus = 4
+
+	RefundNothing PayStatus = 61
+	Refunding     PayStatus = 62
+	Refunded      PayStatus = 63
+	RefundFailed  PayStatus = 64
 )
 
 // 红包订单状态：创建， 发布，过期，失效
 type OrderStatus int
 
 const (
-	OrderCreate   OrderStatus = 1
-	OrderSending  OrderStatus = 2
-	OrderExpired  OrderStatus = 3
-	OrderDisabled OrderStatus = 4
+	OrderCreate               OrderStatus = 1
+	OrderSending              OrderStatus = 2
+	OrderExpired              OrderStatus = 3
+	OrderDisabled             OrderStatus = 4
+	OrderExpiredRefundSucceed OrderStatus = 5
+	OrderExpiredRefundFiled   OrderStatus = 6
 )
 
 // 活动状态，创建，激活，过期，失效

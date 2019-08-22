@@ -1,6 +1,7 @@
 package envelopes
 
 import (
+	"database/sql"
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
@@ -17,9 +18,12 @@ func TestRedEnvelopeItemDao(t *testing.T) {
 		dao := RedEnvelopeItemDao{runner: runner}
 		Convey("红包item数据库操作", t, func() {
 			data := &RedEnvelopeItem{
-				ItemNo:       1234567890,
-				EnvelopeNo:   ksuid.New().Next().String(),
-				RecvUsername: "测试用item Username",
+				ItemNo:     ksuid.New().Next().String(),
+				EnvelopeNo: ksuid.New().Next().String(),
+				RecvUsername: sql.NullString{
+					String: "测试用item Username",
+					Valid:  true,
+				},
 				RecvUserId:   "测试用item UserId",
 				Amount:       decimal.NewFromFloat(10.2),
 				Quantity:     1,

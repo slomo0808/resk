@@ -13,7 +13,9 @@ require (
 	github.com/go-ini/ini v1.44.0
 	github.com/go-playground/locales v0.12.1
 	github.com/go-playground/universal-translator v0.16.0
+	github.com/go-redsync/redsync v1.3.0
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
 	github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1 // indirect
 	github.com/iris-contrib/go.uuid v2.0.0+incompatible // indirect

@@ -22,6 +22,7 @@ CREATE TABLE `red_envelope_goods`
     `pay_status` tinyint(2) not null comment '支付状态:未支付，支付中，已支付',
     `created_at` datetime(3) not null default current_timestamp(3) comment '创建时间',
     `updated_at` datetime(3) not null default current_timestamp(3) on update current_timestamp(3) comment '更新时间',
+    `origin_envelope_no` varchar(32) not null default '' comment '原红包编号',
     primary key (`id`) using btree ,
     unique key `envelope_no_idx` (`envelope_no`) using btree ,
     key `id_user_idx` (`user_id`) using btree
