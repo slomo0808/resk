@@ -46,6 +46,7 @@ CREATE TABLE `red_envelope_item`
     `remain_amount` decimal(30,6) unsigned not null comment '收到后原红包剩余金额',
     `account_no` varchar(32) not null comment '红包接受者账户编号',
     `pay_status` tinyint(2) not null comment '支付状态:未支付，支付中，已支付',
+    `desc` varchar(128) not null comment '交易描述',
     `created_at` datetime(3) not null default current_timestamp(3) comment '创建时间',
     `updated_at` datetime(3) not null default current_timestamp(3) on update current_timestamp(3) comment '更新时间',
     primary key (`id`) using btree ,

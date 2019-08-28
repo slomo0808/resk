@@ -1,6 +1,8 @@
 package infra
 
-import "github.com/go-ini/ini"
+import (
+	"github.com/go-ini/ini"
+)
 
 // 应用程序启动管理器
 type BootApplication struct {

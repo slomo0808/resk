@@ -2,7 +2,7 @@ package envelopes
 
 import (
 	"github.com/shopspring/decimal"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/tietang/dbx"
 	"imooc.com/resk/services"
 	"time"
@@ -16,7 +16,7 @@ type RedEnvelopeDao struct {
 func (dao *RedEnvelopeDao) Insert(po *RedEnvelopeGoods) (int64, error) {
 	rs, err := dao.runner.Insert(po)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 		return 0, nil
 	}
 	return rs.LastInsertId()
@@ -27,7 +27,7 @@ func (dao *RedEnvelopeDao) GetOne(envelopeNo string) *RedEnvelopeGoods {
 	var out = &RedEnvelopeGoods{EnvelopeNo: envelopeNo}
 	ok, err := dao.runner.GetOne(out)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 		return nil
 	}
 	if !ok {
@@ -51,7 +51,7 @@ func (dao *RedEnvelopeDao) UpdateBalance(envelopeNo string, amount decimal.Decim
 		" and remain_amount >= CAST(? as DECIMAL(30,6)) "
 	res, err := dao.runner.Exec(sqlQuery, amount.String(), envelopeNo, amount.String())
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 		return 0, err
 	}
 	return res.RowsAffected()
@@ -64,7 +64,7 @@ func (dao *RedEnvelopeDao) UpdateOrderStatus(envelopeNo string, status services.
 		" where envelope_no=?"
 	res, err := dao.runner.Exec(sqlQuery, int(status), envelopeNo)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 		return 0, err
 	}
 	return res.RowsAffected()
@@ -79,7 +79,40 @@ func (dao *RedEnvelopeDao) FindExpired(offset, size int) []RedEnvelopeGoods {
 		" limit ?,?"
 	err := dao.runner.Find(&goods, sqlQuery, now, offset, size)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
+	}
+	return goods
+}
+
+func (dao *RedEnvelopeDao) Find(po *RedEnvelopeGoods, offset, limit int) []RedEnvelopeGoods {
+	var redEnvelopeGoodss []RedEnvelopeGoods
+	err := dao.runner.FindExample(po, &redEnvelopeGoodss)
+	if err != nil {
+		log.Error(err)
+	}
+	return redEnvelopeGoodss
+}
+
+func (dao *RedEnvelopeDao) FindByUser(userId string, offset, limit int) []RedEnvelopeGoods {
+	var goods []RedEnvelopeGoods
+
+	sql := " select * from red_envelope_goods " +
+		" where  user_id=?  order by created_at desc limit ?,?"
+	err := dao.runner.Find(&goods, sql, userId, offset, limit)
+	if err != nil {
+		log.Error(err)
+	}
+	return goods
+}
+
+func (dao *RedEnvelopeDao) ListReceivable(offset, size int) []RedEnvelopeGoods {
+	var goods []RedEnvelopeGoods
+	now := time.Now()
+	sql := " select * from red_envelope_goods " +
+		" where  remain_quantity>0  and expired_at>? order by created_at desc limit ?,?"
+	err := dao.runner.Find(&goods, sql, now, offset, size)
+	if err != nil {
+		log.Error(err)
 	}
 	return goods
 }

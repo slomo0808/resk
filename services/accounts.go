@@ -31,44 +31,44 @@ type AccountService interface {
 
 // 账户创建
 type AccountCreatedDTO struct {
-	UserId       string `json:"user_id" validate:"required"`
+	UserId       string `json:"userId" validate:"required"`
 	Username     string `json:"username" validate:"required"`
-	AccountName  string `json:"account_name" validate:"required"`
-	AccountType  int    `json:"account_type"`
-	CurrencyCode string `json:"currency_code"`
+	AccountName  string `json:"accountName" validate:"required"`
+	AccountType  int    `json:"accountType"`
+	CurrencyCode string `json:"currencyCode"`
 	Amount       string `json:"amount" validate:"required"`
 }
 
 //账户
 type AccountDTO struct {
-	AccountNo    string          `json:"account_no"`    //账户编号,账户唯一标识
-	AccountName  string          `json:"account_name"`  //账户名称,用来说明账户的简短描述,账户对应的名称或者命名，比如xxx积分、xxx零钱
-	AccountType  int             `json:"account_type"`  //账户类型，用来区分不同类型的账户：积分账户、会员卡账户、钱包账户、红包账户
-	CurrencyCode string          `json:"currency_code"` //货币类型编码：CNY人民币，EUR欧元，USD美元 。。。
-	UserId       string          `json:"user_id"`       //用户编号, 账户所属用户
-	Username     string          `json:"username"`      //用户名称
-	Balance      decimal.Decimal `json:"balance"`       //账户可用余额
-	Status       int             `json:"status"`        //账户状态，账户状态：0账户初始化，1启用，2停用
-	CreatedAt    time.Time       `json:"created_at"`    //创建时间
-	UpdatedAt    time.Time       `json:"updated_at"`    //更新时间
+	AccountNo    string          `json:"accountNo"`    //账户编号,账户唯一标识
+	AccountName  string          `json:"accountName"`  //账户名称,用来说明账户的简短描述,账户对应的名称或者命名，比如xxx积分、xxx零钱
+	AccountType  int             `json:"accountType"`  //账户类型，用来区分不同类型的账户：积分账户、会员卡账户、钱包账户、红包账户
+	CurrencyCode string          `json:"currencyCode"` //货币类型编码：CNY人民币，EUR欧元，USD美元 。。。
+	UserId       string          `json:"userId"`       //用户编号, 账户所属用户
+	Username     string          `json:"username"`     //用户名称
+	Balance      decimal.Decimal `json:"balance"`      //账户可用余额
+	Status       int             `json:"status"`       //账户状态，账户状态：0账户初始化，1启用，2停用
+	CreatedAt    time.Time       `json:"createdAt"`    //创建时间
+	UpdatedAt    time.Time       `json:"updatedAt"`    //更新时间
 }
 
 // 账户交易参与者
 type TradeParticipator struct {
-	AccountNo string `validate:"required" json:"account_no"`
-	UserId    string `validate:"required" json:"user_id"`
+	AccountNo string `validate:"required" json:"accountNo"`
+	UserId    string `validate:"required" json:"userId"`
 	Username  string `validate:"required" json:"username"`
 }
 
 // 账户转账
 type AccountTransferDTO struct {
-	TradeNo     string            `validate:"required" json:"trade_no"`
-	TradeBody   TradeParticipator `validate:"required" json:"trade_body"`
-	TradeTarget TradeParticipator `validate:"required" json:"trade_target"`
-	AmountStr   string            `validate:"required" json:"amount_str"`
+	TradeNo     string            `validate:"required" json:"tradeNo"`
+	TradeBody   TradeParticipator `validate:"required" json:"tradeBody"`
+	TradeTarget TradeParticipator `validate:"required" json:"tradeTarget"`
+	AmountStr   string            `validate:"required" json:"amountStr"`
 	Amount      decimal.Decimal   ``
-	ChangeType  ChangeType        `validate:"required" json:"change_type"`
-	ChangeFlag  ChangeFlag        `validate:"required" json:"change_flag"`
+	ChangeType  ChangeType        `validate:"required" json:"changeType"`
+	ChangeFlag  ChangeFlag        `validate:"required" json:"changeFlag"`
 	Desc        string            `json:"desc"`
 }
 

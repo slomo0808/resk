@@ -9,6 +9,7 @@ import (
 	"imooc.com/resk/infra"
 	"imooc.com/resk/infra/base"
 	"imooc.com/resk/jobs"
+	_ "imooc.com/resk/views"
 )
 
 func init() {

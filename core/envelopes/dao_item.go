@@ -30,10 +30,35 @@ func (dao *RedEnvelopeItemDao) Insert(data *RedEnvelopeItem) (int64, error) {
 func (dao *RedEnvelopeItemDao) FindItems(envelopeNo string) []*RedEnvelopeItem {
 	items := make([]*RedEnvelopeItem, 0)
 	sqlQuery := "select * from red_envelope_item where envelope_no = ?"
-	err := dao.runner.Find(items, sqlQuery, envelopeNo)
+	err := dao.runner.Find(&items, sqlQuery, envelopeNo)
 	if err != nil {
 		logrus.Error(err)
 		return nil
 	}
 	return items
+}
+
+func (dao *RedEnvelopeItemDao) ListReceivedItems(userId string, offset, limit int) []*RedEnvelopeItem {
+	items := make([]*RedEnvelopeItem, 0)
+	sqlQuery := "select * from red_envelope_item where recv_user_id = ? order by created_at desc limit ?,?"
+	err := dao.runner.Find(&items, sqlQuery, userId, offset, limit)
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
+	return items
+}
+
+func (dao *RedEnvelopeItemDao) GetByUser(envelopeNo, userId string) *RedEnvelopeItem {
+	item := RedEnvelopeItem{}
+	sql := "select * from red_envelope_item where envelope_no=? and recv_user_id=?"
+	ok, err := dao.runner.Get(&item, sql, envelopeNo, userId)
+	if !ok {
+		return nil
+	}
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
+	return &item
 }

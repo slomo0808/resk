@@ -69,6 +69,47 @@ func (s *redEnvelopeService) Refund(string) *services.RedEnvelopeGoodsDTO {
 	panic("implement me")
 }
 
-func (s *redEnvelopeService) Get() services.RedEnvelopeGoodsDTO {
-	panic("implement me")
+func (s *redEnvelopeService) Get(envelopeNo string) *services.RedEnvelopeGoodsDTO {
+	domain := new(goodsDomain)
+	goods := domain.Get(envelopeNo)
+	return goods.ToDTO()
+}
+
+func (s *redEnvelopeService) ListSent(userId string, page, size int) []*services.RedEnvelopeGoodsDTO {
+	domain := new(goodsDomain)
+	pos := domain.FindByUser(userId, page, size)
+
+	orders := make([]*services.RedEnvelopeGoodsDTO, 0, len(pos))
+	for _, po := range pos {
+		orders = append(orders, po.ToDTO())
+	}
+	return orders
+}
+
+func (s *redEnvelopeService) ListReceived(userId string, page, size int) (items []*services.RedEnvelopeItemDTO) {
+	domain := new(goodsDomain)
+	pos := domain.ListReceived(userId, page, size)
+	items = make([]*services.RedEnvelopeItemDTO, 0, len(pos))
+	if len(pos) == 0 {
+		return items
+	}
+	for _, p := range pos {
+		items = append(items, p.ToDTO())
+	}
+	return
+}
+
+func (s *redEnvelopeService) ListItems(envelopeNo string) (items []*services.RedEnvelopeItemDTO) {
+	domain := itemDomain{}
+	return domain.FindItems(envelopeNo)
+}
+
+func (s *redEnvelopeService) ListReceivable(offset int, size int) []*services.RedEnvelopeGoodsDTO {
+	domain := new(goodsDomain)
+	pos := domain.ListReceivable(offset, size)
+	orders := make([]*services.RedEnvelopeGoodsDTO, 0, len(pos))
+	for _, po := range pos {
+		orders = append(orders, po.ToDTO())
+	}
+	return orders
 }

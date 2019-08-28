@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/shopspring/decimal"
 	"github.com/tietang/dbx"
 	"imooc.com/resk/core/accounts"
@@ -112,6 +113,14 @@ func (domain *goodsDomain) preCreateItem(dto *services.RedEnvelopeReceiveDTO) {
 		Valid:  true,
 	}
 	domain.item.RecvUserId = dto.RecvUserId
+	goods := domain.Get(dto.EnvelopeNo)
+	var s string
+	if goods.EnvelopeType == services.GeneralEnvelopeType {
+		s = "普通"
+	} else {
+		s = "碰运气"
+	}
+	domain.item.Desc = fmt.Sprintf("%s的%s红包", goods.Username.String, s)
 	domain.item.createItemNo()
 }
 

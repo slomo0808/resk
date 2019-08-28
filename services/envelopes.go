@@ -23,14 +23,22 @@ type RedEnvelopeService interface {
 	// 退款
 	Refund(string) *RedEnvelopeGoodsDTO
 	// 查询红包订单
-	Get() RedEnvelopeGoodsDTO
+	Get(string) *RedEnvelopeGoodsDTO
+	// 查询本人发送的红包列表
+	ListSent(string, int, int) []*RedEnvelopeGoodsDTO
+
+	ListReceived(userId string, page, size int) []*RedEnvelopeItemDTO
+
+	ListItems(envelopeNo string) []*RedEnvelopeItemDTO
+
+	ListReceivable(int, int) []*RedEnvelopeGoodsDTO
 }
 
 // 发红包所需信息
 type RedEnvelopeSendingDTO struct {
-	EnvelopeType int             `json:"envelope_type" validate:"required"`
+	EnvelopeType int             `json:"envelopeType" validate:"required"`
 	Username     string          `json:"username" validate:"required"`
-	UserId       string          `json:"user_id" validate:"required"`
+	UserId       string          `json:"userId" validate:"required"`
 	Blessing     string          `json:"blessing"`
 	Amount       decimal.Decimal `json:"amount" validate:"required"`
 	Quantity     int             `json:"quantity" validate:"required"`
@@ -49,10 +57,10 @@ func (dto *RedEnvelopeSendingDTO) ToGoods() *RedEnvelopeGoodsDTO {
 
 // 收红包所需信息
 type RedEnvelopeReceiveDTO struct {
-	EnvelopeNo   string `json:"envelope_no" validate:"required"`
+	EnvelopeNo   string `json:"envelopeNo" validate:"required"`
 	RecvUsername string `json:"recv_username" validate:"required"`
-	RecvUserId   string `json:"recv_user_id" validate:"required"`
-	AccountNo    string `json:"account_no"`
+	RecvUserId   string `json:"recv_userId" validate:"required"`
+	AccountNo    string `json:"accountNo"`
 }
 
 type RedEnvelopeActivity struct {
@@ -81,38 +89,40 @@ func (this *RedEnvelopeActivity) CopyTo(target *RedEnvelopeActivity) {
 }
 
 type RedEnvelopeGoodsDTO struct {
-	EnvelopeNo       string          `json:"envelope_no"`
-	EnvelopeType     int             `json:"envelope_type" validate:"required"`
+	EnvelopeNo       string          `json:"envelopeNo"`
+	EnvelopeType     int             `json:"envelopeType" validate:"required"`
 	Username         string          `json:"username" validate:"required"`
-	UserId           string          `json:"user_id" validate:"required"`
+	UserId           string          `json:"userId" validate:"required"`
 	Blessing         string          `json:"blessing"`
 	Amount           decimal.Decimal `json:"amount" validate:"required"`
-	AmountOne        decimal.Decimal `json:"amount_one"`
+	AmountOne        decimal.Decimal `json:"amountOne"`
 	Quantity         int             `json:"quantity" validate:"required"`
-	RemainAmount     decimal.Decimal `json:"remain_amount"`
-	RemainQuantity   int             `json:"remain_quantity"`
-	ExpiredAt        time.Time       `json:"expired_at"`
+	RemainAmount     decimal.Decimal `json:"remainAmount"`
+	RemainQuantity   int             `json:"remainQuantity"`
+	ExpiredAt        time.Time       `json:"expiredAt"`
 	Status           int             `json:"status"`
-	OrderType        OrderType       `json:"order_type"`
-	PayStatus        PayStatus       `json:"pay_status"`
-	CreatedAt        time.Time       `json:"created_at"`
-	UpdatedAt        time.Time       `json:"updated_at"`
-	AccountNo        string          `json:"account_no"`
-	OriginEnvelopeNo string          `json:"origin_envelope_no"` // 原关联订单号
+	OrderType        OrderType       `json:"orderType"`
+	PayStatus        PayStatus       `json:"payStatus"`
+	CreatedAt        time.Time       `json:"createdAt"`
+	UpdatedAt        time.Time       `json:"updatedAt"`
+	AccountNo        string          `json:"accountNo"`
+	OriginEnvelopeNo string          `json:"originEnvelopeNo"` // 原关联订单号
 }
 
 type RedEnvelopeItemDTO struct {
-	ItemNo       string          `json:"item_no"`       // 红包订单详情编号
-	EnvelopeNo   string          `json:"envelope_no"`   // 红包编号
-	RecvUsername string          `json:"recv_username"` // 接收者用户名
-	RecvUserId   string          `json:"recv_user_id"`  // 接收者用户id
-	Amount       decimal.Decimal `json:"amount"`        // 收到金额
-	Quantity     int             `json:"quantity"`      // 收到数量
-	RemainAmount decimal.Decimal `json:"remain_amount"` // 剩余金额
-	AccountNo    string          `json:"account_no"`    // 红包接收者账户ID
-	PayStatus    int             `json:"pay_status"`    // 支付状态
-	CreatedAt    time.Time       `json:"created_at"`    // 创建时间
-	UpdatedAt    time.Time       `json:"updated_at"`    // 修改时间
+	ItemNo       string          `json:"itemNo"`       // 红包订单详情编号
+	EnvelopeNo   string          `json:"envelopeNo"`   // 红包编号
+	RecvUsername string          `json:"recvUsername"` // 接收者用户名
+	RecvUserId   string          `json:"recvUserId"`   // 接收者用户id
+	Amount       decimal.Decimal `json:"amount"`       // 收到金额
+	Quantity     int             `json:"quantity"`     // 收到数量
+	RemainAmount decimal.Decimal `json:"remainAmount"` // 剩余金额
+	AccountNo    string          `json:"accountNo"`    // 红包接收者账户ID
+	PayStatus    int             `json:"payStatus"`    // 支付状态
+	IsLuckiest   bool            `json:"isLuckiest"`   // 是否是最幸运的
+	CreatedAt    time.Time       `json:"createdAt"`    // 创建时间
+	UpdatedAt    time.Time       `json:"updatedAt"`    // 修改时间
+	Desc         string          `json:"desc"`
 }
 
 func (item *RedEnvelopeItemDTO) CopyTo(target *RedEnvelopeItemDTO) {

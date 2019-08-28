@@ -49,3 +49,6 @@ const (
 	EnvelopeAccountType       AccountType = 1
 	SystemEnvelopeAccountType AccountType = 2
 )
+
+// 货币类型
+const DefaultCurrencyCode = "CNY"
