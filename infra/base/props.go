@@ -3,6 +3,7 @@ package base
 import (
 	"fmt"
 	"github.com/go-ini/ini"
+	"github.com/sirupsen/logrus"
 	"imooc.com/resk/infra"
 	"sync"
 )
@@ -18,6 +19,7 @@ type PropsStarter struct {
 }
 
 func (p *PropsStarter) Init(ctx infra.StarterContext) {
+	logrus.Info("PropsStarter Init()")
 	props = ctx.Props()
 	GetSystemAccount()
 	fmt.Println("初始化配置。")

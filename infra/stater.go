@@ -1,6 +1,10 @@
 package infra
 
-import "github.com/go-ini/ini"
+import (
+	"github.com/go-ini/ini"
+	"github.com/sirupsen/logrus"
+	"reflect"
+)
 
 const (
 	KeyProps = "_conf"
@@ -45,17 +49,32 @@ func (b *BaseStarter) Stop(ctx StarterContext)  {}
 
 // 启动器注册器
 type starterRegister struct {
-	starters []Starter
+	nonBlockingStarters []Starter
+	blockingStarters    []Starter
 }
 
-// 启动器注册
-func (r *starterRegister) Register(s Starter) {
-	r.starters = append(r.starters, s)
+//注册启动器
+func (r *starterRegister) Register(starter Starter) {
+	if starter.StartBlocking() {
+		r.blockingStarters = append(r.blockingStarters, starter)
+	} else {
+		r.nonBlockingStarters = append(r.nonBlockingStarters, starter)
+	}
+
+	typ := reflect.TypeOf(starter)
+	logrus.Infof("Register starter: %s", typ.String())
 }
 
 // 返回所有Starter
 func (r *starterRegister) AllStarters() []Starter {
-	return r.starters
+	starters := make([]Starter, 0)
+	starters = append(starters, r.nonBlockingStarters...)
+	starters = append(starters, r.blockingStarters...)
+	return starters
+}
+
+func GetStarters() []Starter {
+	return StarterRegister.AllStarters()
 }
 
 var StarterRegister *starterRegister = new(starterRegister)
@@ -68,17 +87,17 @@ func Register(s Starter) {
 func SystemRun() {
 	ctx := StarterContext{}
 	// 1.初始化
-	for _, s := range StarterRegister.starters {
+	for _, s := range GetStarters() {
 		s.Init(ctx)
 	}
 
 	// 2,安装
-	for _, s := range StarterRegister.starters {
+	for _, s := range GetStarters() {
 		s.Setup(ctx)
 	}
 
 	// 3.启动
-	for _, s := range StarterRegister.starters {
+	for _, s := range GetStarters() {
 		s.Start(ctx)
 	}
 }

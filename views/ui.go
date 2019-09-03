@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/kataras/iris"
 	"github.com/shopspring/decimal"
+	"imooc.com/resk/comm"
 	"imooc.com/resk/core/users"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -26,7 +28,9 @@ type MobileView struct {
 
 func (v *MobileView) Init() {
 	v.UserService = new(users.UserService)
-	dir := filepath.Join("./", "public/ui")
+	currentPath := comm.GetCurrentPath()
+	workPath := strings.TrimRight(currentPath, "views")
+	dir := filepath.Join(workPath, "public/ui")
 	app := base.Iris()
 	views := iris.HTML(dir, ".html")
 	views.Reload(true)

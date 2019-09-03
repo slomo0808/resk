@@ -13,12 +13,14 @@ import (
 )
 
 func init() {
+
 	infra.Register(&base.PropsStarter{})
 	infra.Register(&base.DbxDatabaseStarter{})
 	infra.Register(&base.ValidatorStarter{})
-	infra.Register(&jobs.RefundExpiredJobStarter{})
-	infra.Register(&infra.WebApiStarter{})
 	infra.Register(&base.GoRPCStarter{})
 	infra.Register(&gorpc.GoRPCApiStarter{})
+	infra.Register(&jobs.RefundExpiredJobStarter{})
 	infra.Register(&base.IrisServerStarter{})
+	infra.Register(&infra.WebApiStarter{})
+	infra.Register(&base.HookStarter{})
 }

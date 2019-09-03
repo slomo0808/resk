@@ -42,6 +42,6 @@ require (
 	github.com/smartystreets/goconvey v0.0.0-20190710185942-9d28bd7c0945
 	github.com/tietang/dbx v1.0.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
-	google.golang.org/appengine v1.6.1 // indirect
+	google.golang.org/appengine v1.6.1
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )

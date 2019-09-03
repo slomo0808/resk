@@ -22,6 +22,7 @@ type DbxDatabaseStarter struct {
 }
 
 func (s *DbxDatabaseStarter) Setup(ctx infra.StarterContext) {
+	logrus.Info("DbxDatabaseStarter Setup()")
 	conf := ctx.Props()
 	// 数据库配置
 	settings := dbx.Settings{

@@ -57,7 +57,7 @@ func (s *RefundExpiredJobStarter) Start(ctx infra.StarterContext) {
 				domain := new(envelopes.ExpiredEnvelopeDomain)
 				domain.Expired()
 			} else {
-				logrus.Info("已经有节点在运行该任务")
+				logrus.Info("已经有节点在运行该任务,err=", err.Error())
 			}
 			s.mutex.Unlock()
 		}

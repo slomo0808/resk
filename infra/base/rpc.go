@@ -27,6 +27,7 @@ type GoRPCStarter struct {
 }
 
 func (s *GoRPCStarter) Init(ctx infra.StarterContext) {
+	log.Info("GoRPCStarter Init()")
 	s.server = rpc.NewServer()
 	rpcServer = s.server
 }

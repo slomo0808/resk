@@ -20,6 +20,7 @@ type IrisServerStarter struct {
 }
 
 func (i *IrisServerStarter) Init(ctx infra.StarterContext) {
+	logrus.Info("IrisServerStarter Init()")
 	// 创建iris application实例
 	irisApplication = initIris()
 	// 日志组件的配置和扩展
