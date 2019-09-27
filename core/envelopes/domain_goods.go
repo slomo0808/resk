@@ -46,10 +46,7 @@ func (domain *goodsDomain) Save(ctx context.Context) (id int64, err error) {
 	err = base.ExecuteContext(ctx, func(runner *dbx.TxRunner) error {
 		dao := &RedEnvelopeDao{runner: runner}
 		id, err = dao.Insert(&domain.RedEnvelopeGoods)
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 	return id, err
 }

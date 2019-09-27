@@ -62,7 +62,7 @@ func (dao *RedEnvelopeDao) UpdateOrderStatus(envelopeNo string, status services.
 	sqlQuery := " update red_envelope_goods" +
 		" set status=? " +
 		" where envelope_no=?"
-	res, err := dao.runner.Exec(sqlQuery, int(status), envelopeNo)
+	res, err := dao.runner.Exec(sqlQuery, status, envelopeNo)
 	if err != nil {
 		log.Error(err)
 		return 0, err
@@ -75,7 +75,7 @@ func (dao *RedEnvelopeDao) FindExpired(offset, size int) []RedEnvelopeGoods {
 	var goods = make([]RedEnvelopeGoods, 0)
 	now := time.Now()
 	sqlQuery := "select * from red_envelope_goods " +
-		" where expired_at < ? " +
+		" where remain_quantity>0 and expired_at<? and (status<4 or status>5) " +
 		" limit ?,?"
 	err := dao.runner.Find(&goods, sqlQuery, now, offset, size)
 	if err != nil {

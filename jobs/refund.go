@@ -18,12 +18,12 @@ type RefundExpiredJobStarter struct {
 }
 
 func (s *RefundExpiredJobStarter) Init(ctx infra.StarterContext) {
-	d := ctx.Props().Section("jobs").Key("refund.interval").MustDuration(1 * time.Minute)
+	d := ctx.Props().GetDurationDefault("jobs.refund.interval", 1*time.Minute)
 	s.ticker = time.NewTicker(d)
-	maxIdle := ctx.Props().Section("redis").Key("maxIdle").MustInt(2)
-	maxActive := ctx.Props().Section("redis").Key("maxActive").MustInt(5)
-	idleTimeout := ctx.Props().Section("redis").Key("idleTimeout").MustDuration(20 * time.Second)
-	addr := ctx.Props().Section("redis").Key("addr").MustString("127.0.0.1:6379")
+	maxIdle := ctx.Props().GetIntDefault("redis.maxIdle", 2)
+	maxActive := ctx.Props().GetIntDefault("redis.maxActive", 5)
+	idleTimeout := ctx.Props().GetDurationDefault("redis.idleTimeout", 20*time.Second)
+	addr := ctx.Props().GetDefault("redis.addr", "127.0.0.1:6379")
 	pools := make([]redsync.Pool, 0)
 	pool := &redis.Pool{
 		Dial: func() (conn redis.Conn, e error) {

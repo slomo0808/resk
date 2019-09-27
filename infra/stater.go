@@ -1,8 +1,8 @@
 package infra
 
 import (
-	"github.com/go-ini/ini"
 	"github.com/sirupsen/logrus"
+	"github.com/tietang/props/kvs"
 	"reflect"
 )
 
@@ -13,12 +13,12 @@ const (
 // 基础资源上下结构体
 type StarterContext map[string]interface{}
 
-func (s StarterContext) Props() *ini.File {
+func (s StarterContext) Props() kvs.ConfigSource {
 	p := s[KeyProps]
 	if p == nil {
 		panic("配置还没有被初始化")
 	}
-	return p.(*ini.File)
+	return p.(kvs.ConfigSource)
 }
 
 // 接触资源启动器接口

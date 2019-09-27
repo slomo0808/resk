@@ -41,6 +41,9 @@ func init() {
 	//log.Info("测试")
 	//log.Debug("debug")
 
+	// 显示文件名代码行数
+	log.SetReportCaller(true)
+
 	// 日志文件和滚动配置
 	// github.com/lestrrat/go-file-rotatelogs
 	logFileSettings()

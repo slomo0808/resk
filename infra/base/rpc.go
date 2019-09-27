@@ -33,7 +33,7 @@ func (s *GoRPCStarter) Init(ctx infra.StarterContext) {
 }
 
 func (s *GoRPCStarter) Start(ctx infra.StarterContext) {
-	port := ctx.Props().Section("app").Key("rpc.port").MustString("18082")
+	port := ctx.Props().GetDefault("app.rpc.port", "18082")
 	// 监听网络端口
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {

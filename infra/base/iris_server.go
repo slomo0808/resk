@@ -36,7 +36,7 @@ func (i *IrisServerStarter) Start(ctx infra.StarterContext) {
 		logrus.Info(r.Trace())
 	}
 	// 启动iris
-	port := ctx.Props().Section("app").Key("server.port").MustString("18080")
+	port := ctx.Props().GetDefault("app.server.port", "18080")
 	Iris().Run(iris.Addr(":" + port))
 }
 

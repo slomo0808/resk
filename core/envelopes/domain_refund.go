@@ -1,10 +1,7 @@
 package envelopes
 
 import (
-	"context"
-	"database/sql"
 	"errors"
-	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
 	"github.com/tietang/dbx"
 	"imooc.com/resk/infra/base"
@@ -56,41 +53,59 @@ func (d *ExpiredEnvelopeDomain) Expired() (err error) {
 // 发起一个退款流程
 func (d *ExpiredEnvelopeDomain) ExpiredOne(goods RedEnvelopeGoods) (err error) {
 	// 创建一个退款订单
-	refund := goods
-	refund.OrderType = services.OrderTypeRefund
-	refund.RemainAmount = decimal.NewFromFloat(0)
-	refund.RemainQuantity = 0
-	refund.Status = services.OrderExpired
-	refund.PayStatus = services.Refunding
-	refund.OriginEnvelopeNo = sql.NullString{
-		String: goods.EnvelopeNo,
-		Valid:  true,
+	refund := RedEnvelopeGoods{
+		EnvelopeNo:       "",
+		EnvelopeType:     goods.EnvelopeType,
+		Username:         goods.Username,
+		UserId:           goods.UserId,
+		Blessing:         goods.Blessing,
+		Amount:           goods.Amount,
+		AmountOne:        goods.AmountOne,
+		Quantity:         goods.Quantity,
+		RemainAmount:     goods.RemainAmount,
+		RemainQuantity:   0,
+		ExpiredAt:        goods.ExpiredAt,
+		Status:           services.OrderExpired,
+		OrderType:        services.OrderTypeRefund,
+		PayStatus:        services.Refunding,
+		OriginEnvelopeNo: goods.EnvelopeNo,
 	}
-	refund.EnvelopeNo = ""
+	//refund := goods
+	//refund.OrderType = services.OrderTypeRefund
+	////refund.RemainAmount = decimal.NewFromFloat(0)
+	//refund.RemainQuantity = 0
+	//refund.Status = services.OrderExpired
+	//refund.PayStatus = services.Refunding
+	//refund.OriginEnvelopeNo = goods.EnvelopeNo
+	//refund.EnvelopeNo = ""
 	domain := goodsDomain{RedEnvelopeGoods: refund}
 	domain.createEnvelopeNo()
+
 	err = base.Tx(func(runner *dbx.TxRunner) error {
-		txCtx := base.WithValueContext(context.Background(), runner)
-		id, err := domain.Save(txCtx)
-		if err != nil || id <= 0 {
-			return errors.New("创建退款订单失败")
-		}
+		// domain.Save()  remain bug
+		//txCtx := base.WithValueContext(context.Background(), runner)
+		//id, err := domain.Save(txCtx)
+		//if err != nil || id <= 0 {
+		//	return errors.New("创建退款订单失败")
+		//}
 
 		// 修改原订单状态
 		dao := RedEnvelopeDao{runner: runner}
-		rows, err := dao.UpdateOrderStatus(goods.EnvelopeNo, services.OrderExpired)
+		id, err := dao.Insert(&refund)
+		if err != nil || id <= 0 {
+			return errors.New("创建退款订单失败")
+		}
+		_, err = dao.UpdateOrderStatus(goods.EnvelopeNo, services.OrderExpired)
 		if err != nil {
 			return errors.New("更新原订单为过期状态-失败" + err.Error())
 		}
-		if rows == 0 {
-			return errors.New("更新原订单为过期状态-失败, 影响行数为0")
-		}
+
 		return nil
 	})
 	if err != nil {
 		return err
 	}
-	// 调用资金账户接口转账
+	//调用资金账户接口转账
 	systemAccount := base.GetSystemAccount()
 	account := services.GetAccountService().GetEnvelopeAccountByUserId(goods.UserId)
 	if account == nil {
@@ -145,19 +160,21 @@ func (d *ExpiredEnvelopeDomain) ExpiredOne(goods RedEnvelopeGoods) (err error) {
 			return errors.New("更新原订单状态为退款成功状态-失败" + err.Error())
 		}
 		if rows == 0 {
-			return errors.New("更新原订单状态为退款成功状态, 影响行数为0")
+			return errors.New("更新原订单状态为退款成功状态-失败, rowsAffected=0")
 		}
 		// 修改退款订单状态
-		rows, err = dao.UpdateOrderStatus(refund.EnvelopeNo, services.OrderExpiredRefundSucceed)
+		_, err = dao.UpdateOrderStatus(refund.EnvelopeNo, services.OrderExpiredRefundSucceed)
 		if err != nil {
-			return errors.New("更新原订单为退款成功状态-失败" + err.Error())
+			return errors.New("更新退款订单为退款成功状态-失败" + err.Error())
 		}
 		if rows == 0 {
-			return errors.New("更新原订单为退款成功状态-失败, 影响行数为0")
+			return errors.New("更新原订单为退款成功状态-失败, rowsAffected=0")
 		}
 		return nil
 	})
+
 	if err != nil {
+		logrus.Error(err)
 		return err
 	}
 	return nil

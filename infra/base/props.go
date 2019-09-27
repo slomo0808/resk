@@ -2,15 +2,15 @@ package base
 
 import (
 	"fmt"
-	"github.com/go-ini/ini"
 	"github.com/sirupsen/logrus"
+	"github.com/tietang/props/kvs"
 	"imooc.com/resk/infra"
 	"sync"
 )
 
-var props *ini.File
+var props kvs.ConfigSource
 
-func Props() *ini.File {
+func Props() kvs.ConfigSource {
 	return props
 }
 
@@ -37,20 +37,19 @@ var systemAccountOnce sync.Once
 
 func GetSystemAccount() *SystemAccount {
 	systemAccountOnce.Do(func() {
-		systemAccount = &SystemAccount{
-			AccountNo:   Props().Section("system.account").Key("accountNo").MustString("10000020190101010000000000000001"),
-			AccountName: Props().Section("system.account").Key("accountName").MustString("系统红包账户"),
-			UserId:      Props().Section("system.account").Key("userId").MustString("10001"),
-			Username:    Props().Section("system.account").Key("username").MustString("系统红包账户"),
+		systemAccount = new(SystemAccount)
+		err := kvs.Unmarshal(Props(), systemAccount, "system.account")
+		if err != nil {
+			logrus.Panic(err)
 		}
 	})
 	return systemAccount
 }
 
 func GetEnvelopeActivityLink() string {
-	return Props().Section("envelope").Key("link").MustString("/v1/envelope/link")
+	return Props().GetDefault("envelope.link", "/v1/envelope/link")
 }
 
 func GetEnvelopeDomain() string {
-	return Props().Section("envelope").Key("domain").MustString("http://localhost")
+	return Props().GetDefault("envelope.domain", "http://localhost")
 }

@@ -25,7 +25,7 @@ type RedEnvelopeGoods struct {
 	PayStatus        services.PayStatus   `db:"pay_status"`
 	CreatedAt        time.Time            `db:"created_at,omitempty"`
 	UpdatedAt        time.Time            `db:"updated_at,omitempty"`
-	OriginEnvelopeNo sql.NullString       `db:"origin_envelope_no"` // 原关联订单号
+	OriginEnvelopeNo string               `db:"origin_envelope_no"` // 原关联订单号
 }
 
 func (po *RedEnvelopeGoods) ToDTO() *services.RedEnvelopeGoodsDTO {
@@ -47,7 +47,7 @@ func (po *RedEnvelopeGoods) ToDTO() *services.RedEnvelopeGoodsDTO {
 		CreatedAt:        po.CreatedAt,
 		UpdatedAt:        po.UpdatedAt,
 		AccountNo:        "",
-		OriginEnvelopeNo: po.OriginEnvelopeNo.String,
+		OriginEnvelopeNo: po.OriginEnvelopeNo,
 	}
 }
 
@@ -71,8 +71,5 @@ func (po *RedEnvelopeGoods) FromDTO(dto *services.RedEnvelopeGoodsDTO) {
 	po.Status = services.OrderStatus(dto.Status)
 	po.OrderType = dto.OrderType
 	po.PayStatus = dto.PayStatus
-	po.OriginEnvelopeNo = sql.NullString{
-		String: dto.OriginEnvelopeNo,
-		Valid:  true,
-	}
+	po.OriginEnvelopeNo = dto.OriginEnvelopeNo
 }

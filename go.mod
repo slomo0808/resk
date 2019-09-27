@@ -10,7 +10,7 @@ require (
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4 // indirect
-	github.com/go-ini/ini v1.44.0
+	github.com/go-ini/ini v1.48.0 // indirect
 	github.com/go-playground/locales v0.12.1
 	github.com/go-playground/universal-translator v0.16.0
 	github.com/go-redsync/redsync v1.3.0
@@ -41,6 +41,9 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190710185942-9d28bd7c0945
 	github.com/tietang/dbx v1.0.0
+	github.com/tietang/go-utils v0.1.3 // indirect
+	github.com/tietang/props v2.2.0+incompatible
+	github.com/valyala/fasttemplate v1.0.1 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	google.golang.org/appengine v1.6.1
 	gopkg.in/go-playground/validator.v9 v9.29.1
