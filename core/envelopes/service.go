@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	"imooc.com/resk/services"
 	"sync"
@@ -26,7 +27,7 @@ func (s *redEnvelopeService) SendOut(dto services.RedEnvelopeSendingDTO) (*servi
 		return nil, err
 	}
 	// 获取红包发送人的资金信息
-	account := services.GetAccountService().GetEnvelopeAccountByUserId(dto.UserId)
+	account := accountServices.GetAccountService().GetEnvelopeAccountByUserId(dto.UserId)
 	if account == nil {
 		return nil, errors.New("用户的账户不存在:" + dto.UserId)
 	}
@@ -55,7 +56,7 @@ func (s *redEnvelopeService) Receive(dto *services.RedEnvelopeReceiveDTO) (item 
 		return nil, err
 	}
 	// 获取当前收红包用户的账户信息
-	account := services.GetAccountService().GetEnvelopeAccountByUserId(dto.RecvUserId)
+	account := accountServices.GetAccountService().GetEnvelopeAccountByUserId(dto.RecvUserId)
 	if account == nil {
 		return nil, errors.New("红包资金账户不存在:user_id = " + dto.RecvUserId)
 	}

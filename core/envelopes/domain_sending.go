@@ -3,9 +3,10 @@ package envelopes
 import (
 	"context"
 	"errors"
+	"github.com/slomo0808/account/core/accounts"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/core/accounts"
 	"imooc.com/resk/services"
 	"path"
 )
@@ -39,44 +40,44 @@ func (domain *goodsDomain) SendOut(
 		// 3.将扣减的红包总金额转入红包中间商的红包资金账户
 
 		// 把资金从红包发送人的资金账户里扣除
-		body := services.TradeParticipator{
+		body := accountServices.TradeParticipator{
 			AccountNo: dto.AccountNo,
 			UserId:    dto.UserId,
 			Username:  dto.Username,
 		}
 		systemAccount := base.GetSystemAccount()
-		target := services.TradeParticipator{
+		target := accountServices.TradeParticipator{
 			AccountNo: systemAccount.AccountNo,
 			UserId:    systemAccount.UserId,
 			Username:  systemAccount.Username,
 		}
-		transfer := &services.AccountTransferDTO{
+		transfer := &accountServices.AccountTransferDTO{
 			TradeNo:     domain.EnvelopeNo,
 			TradeBody:   body,
 			TradeTarget: target,
 			Amount:      domain.Amount,
-			ChangeType:  services.EnvelopeOutgoing,
-			ChangeFlag:  services.FlagTransferOut,
+			ChangeType:  accountServices.EnvelopeOutgoing,
+			ChangeFlag:  accountServices.FlagTransferOut,
 			Desc:        "红包金额支付",
 		}
 		accountDomain := accounts.NewAccountDomain()
 		status, err := accountDomain.TransferWithContextTx(ctx, transfer)
-		if status != services.TransferredStatusSuccess {
+		if status != accountServices.TransferredStatusSuccess {
 			return err
 		}
 
 		// 将扣减的红包总金额转入红包中间商的红包资金账户
-		transfer = &services.AccountTransferDTO{
+		transfer = &accountServices.AccountTransferDTO{
 			TradeNo:     domain.EnvelopeNo,
 			TradeBody:   target,
 			TradeTarget: body,
 			Amount:      domain.Amount,
-			ChangeType:  services.EnvelopeIncoming,
-			ChangeFlag:  services.FlagTransferIn,
+			ChangeType:  accountServices.EnvelopeIncoming,
+			ChangeFlag:  accountServices.FlagTransferIn,
 			Desc:        "红包金额转入",
 		}
 		status, err = accountDomain.TransferWithContextTx(ctx, transfer)
-		if status != services.TransferredStatusSuccess {
+		if status != accountServices.TransferredStatusSuccess {
 			return err
 		}
 		return nil

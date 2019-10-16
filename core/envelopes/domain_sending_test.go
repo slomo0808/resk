@@ -3,10 +3,11 @@ package envelopes
 import (
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/slomo0808/account/core/accounts"
+	accountSerevices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/core/accounts"
 	"imooc.com/resk/services"
 	"path"
 	"testing"
@@ -16,7 +17,7 @@ func TestGoodsDomain_SendOut(t *testing.T) {
 	err := base.Tx(func(runner *dbx.TxRunner) error {
 		domain := &goodsDomain{}
 		adomain := accounts.NewAccountDomain()
-		aDto := &services.AccountDTO{
+		aDto := &accountSerevices.AccountDTO{
 			AccountName: "测试用账户",
 			AccountType: 1,
 			UserId:      "发送测试用userId",

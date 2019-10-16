@@ -4,6 +4,7 @@ import (
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/dbx"
@@ -13,12 +14,12 @@ import (
 
 func TestRedEnvelopeService_SendOut(t *testing.T) {
 	// 发红包人的资金账户
-	as := services.GetAccountService()
-	acDTO := &services.AccountCreatedDTO{
+	as := accountServices.GetAccountService()
+	acDTO := &accountServices.AccountCreatedDTO{
 		UserId:      ksuid.New().Next().String(),
 		Username:    "测试用户",
 		AccountName: "测试账户",
-		AccountType: int(services.EnvelopeAccountType),
+		AccountType: int(accountServices.EnvelopeAccountType),
 		Amount:      "1000",
 	}
 	res := services.GetRedEnvelopeService()

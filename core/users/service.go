@@ -2,9 +2,9 @@ package users
 
 import (
 	log "github.com/sirupsen/logrus"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/services"
 	"strconv"
 )
 
@@ -12,7 +12,7 @@ type UserService struct {
 }
 
 func (u *UserService) Login(mobile, username string) (user *User) {
-	as := services.GetAccountService()
+	as := accountServices.GetAccountService()
 	err := base.Tx(func(runner *dbx.TxRunner) error {
 		dao := UserDao{runner: runner}
 		user = dao.GetOne(mobile)
@@ -53,12 +53,12 @@ func (u *UserService) Login(mobile, username string) (user *User) {
 	//创建资金账户
 	a := as.GetEnvelopeAccountByUserId(user.UserId)
 	if a == nil {
-		dto := services.AccountCreatedDTO{
+		dto := accountServices.AccountCreatedDTO{
 			UserId:       user.UserId,
 			Username:     user.Username,
 			AccountName:  user.Username,
-			AccountType:  int(services.EnvelopeAccountType),
-			CurrencyCode: services.DefaultCurrencyCode,
+			AccountType:  int(accountServices.EnvelopeAccountType),
+			CurrencyCode: accountServices.DefaultCurrencyCode,
 			Amount:       "1000",
 		}
 		_, err := as.CreateAccount(&dto)

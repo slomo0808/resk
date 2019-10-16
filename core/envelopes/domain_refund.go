@@ -3,6 +3,7 @@ package envelopes
 import (
 	"errors"
 	"github.com/sirupsen/logrus"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
 	"imooc.com/resk/services"
@@ -107,48 +108,48 @@ func (d *ExpiredEnvelopeDomain) ExpiredOne(goods RedEnvelopeGoods) (err error) {
 	}
 	//调用资金账户接口转账
 	systemAccount := base.GetSystemAccount()
-	account := services.GetAccountService().GetEnvelopeAccountByUserId(goods.UserId)
+	account := accountServices.GetAccountService().GetEnvelopeAccountByUserId(goods.UserId)
 	if account == nil {
 		return errors.New("没有找到该用户的红包资金账户")
 	}
-	body := services.TradeParticipator{
+	body := accountServices.TradeParticipator{
 		AccountNo: systemAccount.AccountNo,
 		UserId:    systemAccount.UserId,
 		Username:  systemAccount.Username,
 	}
-	target := services.TradeParticipator{
+	target := accountServices.TradeParticipator{
 		AccountNo: account.AccountNo,
 		UserId:    account.UserId,
 		Username:  account.Username,
 	}
 	// 系统账户扣减资金
-	transfer := &services.AccountTransferDTO{
+	transfer := &accountServices.AccountTransferDTO{
 		TradeNo:     domain.RedEnvelopeGoods.EnvelopeNo,
 		TradeBody:   body,
 		TradeTarget: target,
 		Amount:      goods.RemainAmount,
 		AmountStr:   goods.RemainAmount.String(),
-		ChangeType:  services.SysEnvelopeExpiredRefund,
-		ChangeFlag:  services.FlagTransferOut,
+		ChangeType:  accountServices.SysEnvelopeExpiredRefund,
+		ChangeFlag:  accountServices.FlagTransferOut,
 		Desc:        "过期退款，系统账户扣减资金：" + goods.EnvelopeNo,
 	}
-	status, err := services.GetAccountService().Transfer(transfer)
-	if status != services.TransferredStatusSuccess {
+	status, err := accountServices.GetAccountService().Transfer(transfer)
+	if status != accountServices.TransferredStatusSuccess {
 		return err
 	}
 	// 用户账户增加资金
-	transfer = &services.AccountTransferDTO{
+	transfer = &accountServices.AccountTransferDTO{
 		TradeNo:     domain.RedEnvelopeGoods.EnvelopeNo,
 		TradeBody:   target,
 		TradeTarget: body,
 		Amount:      goods.RemainAmount,
 		AmountStr:   goods.RemainAmount.String(),
-		ChangeType:  services.EnvelopeExpiredRefund,
-		ChangeFlag:  services.FlagTransferIn,
+		ChangeType:  accountServices.EnvelopeExpiredRefund,
+		ChangeFlag:  accountServices.FlagTransferIn,
 		Desc:        "过期退款，返还用户资金：" + goods.EnvelopeNo,
 	}
-	status, err = services.GetAccountService().Transfer(transfer)
-	if status != services.TransferredStatusSuccess {
+	status, err = accountServices.GetAccountService().Transfer(transfer)
+	if status != accountServices.TransferredStatusSuccess {
 		return err
 	}
 

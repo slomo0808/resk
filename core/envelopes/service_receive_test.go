@@ -3,6 +3,7 @@ package envelopes
 import (
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
+	accountServices "github.com/slomo0808/account/services"
 	. "github.com/smartystreets/goconvey/convey"
 	"imooc.com/resk/services"
 	"strconv"
@@ -11,16 +12,16 @@ import (
 
 func TestGoodsDomain_Receive(t *testing.T) {
 	// 1.准备几个h红包资金账户，用户收发红包
-	as := services.GetAccountService()
-	accounts := make([]*services.AccountDTO, 0)
+	as := accountServices.GetAccountService()
+	accounts := make([]*accountServices.AccountDTO, 0)
 	size := 10
 	Convey("收红包测试用例", t, func() {
 		for i := 0; i < size; i++ {
-			account := &services.AccountCreatedDTO{
+			account := &accountServices.AccountCreatedDTO{
 				UserId:      ksuid.New().Next().String(),
 				Username:    "测试用户" + strconv.Itoa(i),
 				AccountName: "测试账户" + strconv.Itoa(i),
-				AccountType: int(services.EnvelopeAccountType),
+				AccountType: int(accountServices.EnvelopeAccountType),
 				Amount:      "10000",
 			}
 			// 账户创建

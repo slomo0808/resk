@@ -6,10 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/shopspring/decimal"
+	"github.com/slomo0808/account/core/accounts"
+	accountServices "github.com/slomo0808/account/services"
 	"github.com/slomo0808/infra/algo"
 	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/core/accounts"
 	"imooc.com/resk/services"
 )
 
@@ -53,7 +54,7 @@ func (domain *goodsDomain) Receive(
 		}
 		// 7.将抢到的红包金额从系统红包中间账户转入当前用户的资金账户
 		status, err := domain.transfer(txCtx, dto)
-		if status == services.TransferredStatusSuccess {
+		if status == accountServices.TransferredStatusSuccess {
 			return nil
 		}
 		return err
@@ -62,43 +63,43 @@ func (domain *goodsDomain) Receive(
 }
 
 func (domain *goodsDomain) transfer(ctx context.Context,
-	dto *services.RedEnvelopeReceiveDTO) (status services.TransferredStatus, err error) {
+	dto *services.RedEnvelopeReceiveDTO) (status accountServices.TransferredStatus, err error) {
 	systemAccount := base.GetSystemAccount()
-	body := services.TradeParticipator{
+	body := accountServices.TradeParticipator{
 		AccountNo: systemAccount.AccountNo,
 		UserId:    systemAccount.UserId,
 		Username:  systemAccount.Username,
 	}
-	target := services.TradeParticipator{
+	target := accountServices.TradeParticipator{
 		AccountNo: dto.AccountNo,
 		UserId:    dto.RecvUserId,
 		Username:  dto.RecvUsername,
 	}
 	if target.AccountNo == "" {
-		ac := accounts.NewAccountDomain().GetAccountByUserIdAndType(target.UserId, services.EnvelopeAccountType)
+		ac := accounts.NewAccountDomain().GetAccountByUserIdAndType(target.UserId, accountServices.EnvelopeAccountType)
 		target.AccountNo = ac.AccountNo
 	}
-	transferDTO := &services.AccountTransferDTO{
+	transferDTO := &accountServices.AccountTransferDTO{
 		TradeBody:   body,
 		TradeTarget: target,
 		Amount:      domain.item.Amount,
-		ChangeType:  services.EnvelopeOutgoing,
-		ChangeFlag:  services.FlagTransferOut,
+		ChangeType:  accountServices.EnvelopeOutgoing,
+		ChangeFlag:  accountServices.FlagTransferOut,
 		Desc:        "红包金额扣减",
 	}
 	accountDomain := accounts.NewAccountDomain()
 	// 系统账户扣减资金
 	status, err = accountDomain.TransferWithContextTx(ctx, transferDTO)
-	if status != services.TransferredStatusSuccess {
+	if status != accountServices.TransferredStatusSuccess {
 		return
 	}
 	// 用户账户增加资金
-	transferDTO = &services.AccountTransferDTO{
+	transferDTO = &accountServices.AccountTransferDTO{
 		TradeBody:   target,
 		TradeTarget: body,
 		Amount:      domain.item.Amount,
-		ChangeType:  services.EnvelopeIncoming,
-		ChangeFlag:  services.FlagTransferIn,
+		ChangeType:  accountServices.EnvelopeIncoming,
+		ChangeFlag:  accountServices.FlagTransferIn,
 		Desc:        "抢红包成功收入",
 	}
 	return accountDomain.TransferWithContextTx(ctx, transferDTO)
