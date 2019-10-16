@@ -3,8 +3,8 @@ package textx
 import (
 	"github.com/slomo0808/infra"
 	"github.com/slomo0808/infra/base"
+	"github.com/slomo0808/infra/comm"
 	"github.com/tietang/props/ini"
-	"imooc.com/resk/comm"
 	"strings"
 )
 

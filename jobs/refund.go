@@ -6,7 +6,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/slomo0808/infra"
-	"imooc.com/resk/comm"
+	"github.com/slomo0808/infra/comm"
 	"imooc.com/resk/core/envelopes"
 	"time"
 )

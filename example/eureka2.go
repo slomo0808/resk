@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/slomo0808/infra/comm"
 	"github.com/tietang/go-eureka-client/eureka"
 	"github.com/tietang/props/ini"
-	"imooc.com/resk/comm"
 	"path/filepath"
 )
 
