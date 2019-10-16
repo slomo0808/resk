@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUN_FILE_NAME=reskd_linux_amd64
+RUN_FILE_NAME=reskd_darwin_amd64
 #运行
 run(){
   echo running... ./${RUN_FILE_NAME} $2

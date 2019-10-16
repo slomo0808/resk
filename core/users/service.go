@@ -2,8 +2,8 @@ package users
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
 	"strconv"
 )

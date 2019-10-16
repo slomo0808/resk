@@ -5,9 +5,9 @@ import (
 	"github.com/go-redsync/redsync"
 	"github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
+	"github.com/slomo0808/infra"
 	"imooc.com/resk/comm"
 	"imooc.com/resk/core/envelopes"
-	"imooc.com/resk/infra"
 	"time"
 )
 

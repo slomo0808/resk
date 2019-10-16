@@ -5,9 +5,9 @@ import (
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/slomo0808/infra/base"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
 	_ "imooc.com/resk/textx"
 	"testing"
@@ -41,7 +41,7 @@ func TestRedEnvelopeItemDao(t *testing.T) {
 			So(out, ShouldNotBeNil)
 			So(out.EnvelopeNo, ShouldEqual, data.EnvelopeNo)
 			So(out.RecvUserId, ShouldEqual, data.RecvUserId)
-			So(out.RecvUsername, ShouldEqual, data.RecvUsername)
+			So(out.RecvUsername.String, ShouldEqual, data.RecvUsername.String)
 			So(out.Amount.String(), ShouldEqual, data.Amount.String())
 			So(out.RemainAmount.String(), ShouldEqual, data.RemainAmount.String())
 			So(out.AccountNo, ShouldEqual, data.AccountNo)

@@ -1,8 +1,8 @@
 package gorpc
 
 import (
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
 )
 
 type GoRPCApiStarter struct {

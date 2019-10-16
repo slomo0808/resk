@@ -2,9 +2,9 @@ package views
 
 import (
 	"github.com/kataras/iris"
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
 	"imooc.com/resk/core/users"
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
 	"path/filepath"
 	"runtime"
 )

@@ -1,13 +1,13 @@
 package resk
 
 import (
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
 	"imooc.com/resk/apis/gorpc"
 	_ "imooc.com/resk/apis/gorpc"
 	_ "imooc.com/resk/apis/web"
 	_ "imooc.com/resk/core/accounts"
 	_ "imooc.com/resk/core/envelopes"
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
 	"imooc.com/resk/jobs"
 	_ "imooc.com/resk/views"
 )
@@ -22,5 +22,6 @@ func init() {
 	infra.Register(&jobs.RefundExpiredJobStarter{})
 	infra.Register(&base.IrisServerStarter{})
 	infra.Register(&infra.WebApiStarter{})
+	infra.Register(&base.EurekaStarter{})
 	infra.Register(&base.HookStarter{})
 }

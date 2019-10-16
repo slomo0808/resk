@@ -104,7 +104,7 @@ func TestAccountService_Transfer(t *testing.T) {
 
 			a2DTOByAccountNo := s.GetAccount(a2DTO.AccountNo)
 			So(a2DTOByAccountNo, ShouldNotBeNil)
-			So(a2DTOByAccountNo.Balance.String(), ShouldEqual, "110")
+			So(a2DTOByAccountNo.Balance.String(), ShouldEqual, "100")
 		})
 		// 从账户2转入账户1，其中账户2余额不足，转账应该失败
 		Convey("从账户2转入账户1，其中账户2余额不足，转账应该失败", func() {

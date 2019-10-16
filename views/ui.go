@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
 	"imooc.com/resk/services"
 	"path/filepath"
 )

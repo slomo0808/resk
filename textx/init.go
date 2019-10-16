@@ -1,11 +1,10 @@
 package textx
 
 import (
-	"github.com/go-ini/ini"
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
+	"github.com/tietang/props/ini"
 	"imooc.com/resk/comm"
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
-	"log"
 	"strings"
 )
 
@@ -14,10 +13,7 @@ func init() {
 	path := comm.GetCurrentPath()
 	path = strings.TrimRight(path, "textx")
 	// 加载和解析配置文件
-	conf, err := ini.Load(path + "brun/config.ini")
-	if err != nil {
-		log.Fatal(err)
-	}
+	conf := ini.NewIniFileCompositeConfigSource(path + "brun/config.ini")
 
 	infra.Register(&base.PropsStarter{})
 	infra.Register(&base.DbxDatabaseStarter{})

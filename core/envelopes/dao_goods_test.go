@@ -6,9 +6,9 @@ import (
 	"github.com/segmentio/ksuid"
 	"github.com/shopspring/decimal"
 	"github.com/sirupsen/logrus"
+	"github.com/slomo0808/infra/base"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/infra/base"
 	"imooc.com/resk/services"
 	_ "imooc.com/resk/textx"
 	"testing"
@@ -77,7 +77,7 @@ func TestRedEnvelopeDao_UpdateBalance(t *testing.T) {
 				Quantity:       10,
 				RemainAmount:   decimal.NewFromFloat(100),
 				RemainQuantity: 10,
-				ExpiredAt:      time.Now().Add(5 * time.Second),
+				ExpiredAt:      time.Now().Add(-5 * time.Second),
 				Status:         services.OrderSending,
 				OrderType:      services.OrderTypeSending,
 				PayStatus:      services.Payed,

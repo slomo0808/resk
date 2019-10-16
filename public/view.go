@@ -3,8 +3,8 @@ package public
 import (
 	"github.com/kataras/iris"
 	log "github.com/sirupsen/logrus"
-	"imooc.com/resk/infra"
-	"imooc.com/resk/infra/base"
+	"github.com/slomo0808/infra"
+	"github.com/slomo0808/infra/base"
 	"path/filepath"
 	"runtime"
 	"strings"

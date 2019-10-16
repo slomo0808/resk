@@ -1,8 +1,8 @@
 package envelopes
 
 import (
+	"github.com/slomo0808/infra/base"
 	"github.com/tietang/dbx"
-	"imooc.com/resk/infra/base"
 )
 
 func (domain *goodsDomain) Find(po *RedEnvelopeGoods, offset, limit int) (regs []RedEnvelopeGoods) {
